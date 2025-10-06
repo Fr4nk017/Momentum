@@ -3,33 +3,36 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.momentum.app.feature_registration.ui.RegistroScreen
-import com.momentum.app.feature_registration.ui.ResumenScreen
-import com.momentum.app.feature_registration.ui.ContratoScreen
-import com.momentum.app.feature_registration.viewmodel.UsuarioViewModel
+import com.momentum.app.feature_wellbeing.ui.PuenteEmocionalScreen
+import com.momentum.app.feature_wellbeing.ui.DiarioScreen
+import com.momentum.app.feature_wellbeing.ui.ChatApoyoScreen
+import com.momentum.app.feature_wellbeing.ui.ProgresoScreen
+import com.momentum.app.feature_wellbeing.ui.PerfilScreen
+import com.momentum.app.feature_wellbeing.viewmodel.BienestarViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-enum class Routes { Registro, Resumen, Contrato }
+enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil }
 
 @Composable
 fun MomentumNavHost() {
     val nav = rememberNavController()
-    val sharedViewModel = viewModel<UsuarioViewModel>()
+    val sharedViewModel = viewModel<BienestarViewModel>()
     
-    NavHost(navController = nav, startDestination = Routes.Registro.name) {
-        composable(Routes.Registro.name) { 
-            RegistroScreen(navController = nav, viewModel = sharedViewModel) 
+    NavHost(navController = nav, startDestination = Routes.PuenteEmocional.name) {
+        composable(Routes.PuenteEmocional.name) { 
+            PuenteEmocionalScreen(navController = nav, viewModel = sharedViewModel) 
         }
-        composable(Routes.Resumen.name) { 
-            ResumenScreen(
-                viewModel = sharedViewModel,
-                onBackClick = { nav.popBackStack() }
-            ) 
+        composable(Routes.Diario.name) { 
+            DiarioScreen(navController = nav, viewModel = sharedViewModel) 
         }
-        composable(Routes.Contrato.name) {
-            ContratoScreen(
-                onBackClick = { nav.popBackStack() }
-            )
+        composable(Routes.Chat.name) {
+            ChatApoyoScreen(navController = nav, viewModel = sharedViewModel)
+        }
+        composable(Routes.Progreso.name) {
+            ProgresoScreen(navController = nav, viewModel = sharedViewModel)
+        }
+        composable(Routes.Perfil.name) {
+            PerfilScreen(navController = nav, viewModel = sharedViewModel)
         }
     }
 }

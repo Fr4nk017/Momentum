@@ -1,1 +1,72 @@
-<resources><string name="app_name">Momentum</string></resources>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Momentum</string>
+    
+    <!-- Navigation -->
+    <string name="nav_puente_emocional">Inicio</string>
+    <string name="nav_diario">Diario</string>
+    <string name="nav_chat">Chat</string>
+    <string name="nav_progreso">Progreso</string>
+    <string name="nav_perfil">Perfil</string>
+    
+    <!-- Puente Emocional Screen -->
+    <string name="puente_emocional_title">Puente Emocional</string>
+    <string name="como_te_sientes">¿Cómo te sientes hoy?</string>
+    <string name="sugerencia_hoy">Sugerencia de hoy</string>
+    <string name="respiracion_446">Respiración 4-4-6 • 3 repeticiones</string>
+    <string name="respiracion_descripcion">Respira y mira por la ventana 1 min.</string>
+    <string name="comenzar">Comenzar</string>
+    
+    <!-- Estados Emocionales -->
+    <string name="estado_feliz">Feliz</string>
+    <string name="estado_tranquilo">Tranquilo</string>
+    <string name="estado_ansioso">Ansioso</string>
+    <string name="estado_triste">Triste</string>
+    <string name="estado_irritado">Irritado</string>
+    <string name="estado_con_energia">Con energía</string>
+    
+    <!-- Diario Screen -->
+    <string name="diario_title">Diario</string>
+    <string name="escribe_como_te_sientes">Escribe cómo te sientes...</string>
+    <string name="guardar">Guardar</string>
+    <string name="sin_entradas_diario">Aún no tienes entradas en tu diario\n¡Escribe la primera!</string>
+    
+    <!-- Chat Screen -->
+    <string name="chat_apoyo_title">Chat de apoyo</string>
+    <string name="escribe_mensaje">Escribe un mensaje...</string>
+    <string name="ejercicio_respiracion_title">Ejercicio de Respiración 4-4-6</string>
+    <string name="inhala">Inhala</string>
+    <string name="manten">Mantén</string>
+    <string name="exhala">Exhala</string>
+    <string name="ciclo_de">Ciclo %1$d de %2$d</string>
+    <string name="ejercicio_completado">¡Ejercicio completado! ✅</string>
+    
+    <!-- Progreso Screen -->
+    <string name="progreso_title">Progreso</string>
+    <string name="resumen_mensual">Resumen mensual</string>
+    <string name="registros_count">Registros: %1$d</string>
+    <string name="sesiones_respiracion_count">Sesiones respiración: %1$d</string>
+    <string name="estados_mas_frecuentes">Estados más frecuentes</string>
+    
+    <!-- Perfil Screen -->
+    <string name="perfil_title">Perfil</string>
+    <string name="editar">Editar</string>
+    <string name="nombre">Nombre</string>
+    <string name="apellido">Apellido</string>
+    <string name="correo_electronico">Correo electrónico</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="ajustes_rapidos">Ajustes rápidos</string>
+    <string name="recordatorios_3h">• Recordatorios cada 3 h</string>
+    <string name="notificaciones_estado">• Notificaciones: %1$s</string>
+    <string name="notificaciones_activadas">activadas</string>
+    <string name="notificaciones_desactivadas">desactivadas</string>
+    <string name="numero_emergencia">• Número emergencia: %1$s</string>
+    
+    <!-- Content Descriptions -->
+    <string name="desc_enviar">Enviar</string>
+    <string name="desc_perfil_avatar">Avatar de perfil</string>
+    
+    <!-- Mensajes del Chat -->
+    <string name="chat_bienvenida">Hola, ¿qué sientes ahora mismo?</string>
+    <string name="chat_ejercicio_sugerencia">Probemos este ejercicio 4-4-6 y una breve atención plena. ¿Listo para empezar?</string>
+</resources>
