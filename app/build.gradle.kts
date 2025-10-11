@@ -16,10 +16,10 @@ android {
         versionName = "1.0.0"
     }
 
-    // Alinea Java/Kotlin/Javac/KSP en Java 17 (sin imports extra)
+    // Alinea Java/Kotlin/Javac/KSP a Java 21 (asegúrate de instalar JDK 21)
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     buildTypes {
@@ -43,9 +43,9 @@ android {
     }
 }
 
-// Kotlin toolchain a 17 (esto ya fuerza jvmTarget para KSP también)
+// Kotlin toolchain a 21 (esto ya fuerza jvmTarget para KSP también)
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 dependencies {
