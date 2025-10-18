@@ -13,12 +13,30 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil }
 
+object AuthRoutes {
+    const val LOGIN = "login"
+    const val REGISTER = "register"
+    const val HOME = "home"
+}
+
 @Composable
 fun MomentumNavHost() {
     val nav = rememberNavController()
     val sharedViewModel = viewModel<BienestarViewModel>()
     
     NavHost(navController = nav, startDestination = Routes.PuenteEmocional.name) {
+        // Authentication routes (placeholders) - implement composables in ui/screens/login and ui/screens/register
+        composable(AuthRoutes.LOGIN) {
+            com.momentum.app.ui.screens.login.LoginScreen(
+                onSuccess = { nav.navigate(Routes.PuenteEmocional.name) },
+                onNavigateRegister = { nav.navigate(AuthRoutes.REGISTER) }
+            )
+        }
+        composable(AuthRoutes.REGISTER) {
+            com.momentum.app.ui.screens.register.RegisterScreen(
+                onSuccess = { nav.navigate(Routes.PuenteEmocional.name) }
+            )
+        }
         composable(Routes.PuenteEmocional.name) { 
             PuenteEmocionalScreen(navController = nav, viewModel = sharedViewModel) 
         }
