@@ -1,7 +1,6 @@
-package com.momentum.app.ui.screens.clientprofile
+package com.momentum.app.feature_wellbeing.ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +14,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -61,7 +62,7 @@ fun ClientProfileScreen(navController: NavController, viewModel: ClientProfileVi
             isError = errors.containsKey("nombre"),
             modifier = Modifier.fillMaxWidth()
         )
-        if (errors.containsKey("nombre")) Text(errors["nombre"]!!, color = androidx.compose.material3.MaterialTheme.colorScheme.error)
+        if (errors.containsKey("nombre")) Text(errors["nombre"]!!, color = MaterialTheme.colorScheme.error)
 
         OutlinedTextField(
             value = form.edad?.toString() ?: "",
@@ -69,7 +70,7 @@ fun ClientProfileScreen(navController: NavController, viewModel: ClientProfileVi
             label = { Text("Edad") },
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
         )
-        if (errors.containsKey("edad")) Text(errors["edad"]!!, color = androidx.compose.material3.MaterialTheme.colorScheme.error)
+        if (errors.containsKey("edad")) Text(errors["edad"]!!, color = MaterialTheme.colorScheme.error)
 
         // Sexo dropdown (read-only TextField + menu)
         OutlinedTextField(
@@ -79,7 +80,7 @@ fun ClientProfileScreen(navController: NavController, viewModel: ClientProfileVi
             label = { Text("Sexo") },
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
             trailingIcon = {
-                androidx.compose.material3.IconButton(onClick = { sexoExpanded = !sexoExpanded }) {
+                IconButton(onClick = { sexoExpanded = !sexoExpanded }) {
                     Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = "Seleccionar sexo")
                 }
             }
@@ -101,7 +102,7 @@ fun ClientProfileScreen(navController: NavController, viewModel: ClientProfileVi
             label = { Text("Estado civil") },
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
             trailingIcon = {
-                androidx.compose.material3.IconButton(onClick = { estadoExpanded = !estadoExpanded }) {
+                IconButton(onClick = { estadoExpanded = !estadoExpanded }) {
                     Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = "Seleccionar estado civil")
                 }
             }
@@ -129,7 +130,7 @@ fun ClientProfileScreen(navController: NavController, viewModel: ClientProfileVi
             leadingIcon = { Icon(Icons.Filled.Email, contentDescription = "Email") },
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
         )
-        if (errors.containsKey("email")) Text(errors["email"]!!, color = androidx.compose.material3.MaterialTheme.colorScheme.error)
+        if (errors.containsKey("email")) Text(errors["email"]!!, color = MaterialTheme.colorScheme.error)
 
         OutlinedTextField(
             value = form.telefono,
