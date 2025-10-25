@@ -1,32 +1,27 @@
 package com.momentum.app.ui.screens.login
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.momentum.app.domain.viewmodel.AuthViewModel
+import com.momentum.app.domain.viewmodel.LoginState
 
 /**
  * LoginScreen composable con validación visual mínima.
@@ -36,38 +31,59 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun LoginScreen(
     onSuccess: () -> Unit,
     onNavigateRegister: () -> Unit,
-    viewModel: LoginViewModel = viewModel()
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
-    val form by viewModel.form.collectAsState()
-    val errors by viewModel.errors.collectAsState()
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    val loginState by viewModel.loginState.collectAsState()
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        OutlinedTextField(
-            value = form.email,
-            onValueChange = viewModel::onEmailChange,
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth(),
-            isError = errors.email != null,
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
-        )
-        if (errors.email != null) {
-            Text(
-                text = errors.email!!.message,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
-            )
+    LaunchedEffect(loginState) {
+        if (loginState is LoginState.Success) {
+            viewModel.resetLoginState()
+            onSuccess()
         }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Momentum",
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier.padding(bottom = 32.dp)
+        )
 
         OutlinedTextField(
-            value = form.password,
-            onValueChange = viewModel::onPasswordChange,
-            label = { Text("Password") },
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") },
+            leadingIcon = {
+                Icon(Icons.Default.Email, contentDescription = "Email icon")
+            },
+            singleLine = true,
+            isError = loginState is LoginState.Error,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp),
-            isError = errors.password != null,
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                .padding(bottom = 16.dp)
+                .testTag("email_field"),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            )
+        )
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Contraseña") },
+            leadingIcon = {
+                Icon(Icons.Default.Lock, contentDescription = "Password icon")
+            },
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
@@ -76,23 +92,77 @@ fun LoginScreen(
                     )
                 }
             },
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            singleLine = true,
+            isError = loginState is LoginState.Error,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+                .testTag("password_field"),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            )
         )
-        if (errors.password != null) {
+
+        if (loginState is LoginState.Error) {
             Text(
-                text = errors.password!!.message,
+                text = (loginState as LoginState.Error).message,
                 color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+                    .testTag("error_text")
             )
         }
 
-        Row(modifier = Modifier.padding(top = 16.dp)) {
-            Button(onClick = { viewModel.submit(onSuccess = onSuccess, onFailure = {}) }) {
-                Text("Login")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(
+                onClick = { viewModel.login(email.trim(), password.trim()) },
+                enabled = loginState !is LoginState.Loading && email.isNotBlank() && password.isNotBlank(),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp)
+                    .testTag("login_button")
+            ) {
+                if (loginState is LoginState.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text("Iniciar Sesión")
+                }
             }
-            TextButton(onClick = onNavigateRegister, modifier = Modifier.padding(start = 8.dp)) {
-                Text("Register")
+
+            TextButton(
+                onClick = onNavigateRegister,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .testTag("register_button")
+            ) {
+                Text("Registrarse")
             }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LoginScreenPreview() {
+    MaterialTheme {
+        Surface {
+            LoginScreen(
+                onSuccess = {},
+                onNavigateRegister = {}
+            )
         }
     }
 }

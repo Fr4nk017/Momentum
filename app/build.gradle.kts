@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
 
 android {
@@ -53,10 +55,17 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
+    // AndroidX Core
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.activity:activity-compose:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
+    
+    // Activity
+    implementation("androidx.activity:activity-compose:1.9.3")
+    implementation("androidx.activity:activity-ktx:1.9.3")
+    
+    // Lifecycle
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
     // Compose
     implementation("androidx.compose.ui:ui")
@@ -82,6 +91,11 @@ dependencies {
     // Material Components: attrs/temas XML que usa Material3
     implementation("com.google.android.material:material:1.12.0")
 
-    // Location (opcional)
+    // Google Play Services
     implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.48")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 }

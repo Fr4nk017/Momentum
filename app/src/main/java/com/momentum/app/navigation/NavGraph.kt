@@ -1,56 +1,112 @@
 package com.momentum.app.navigation
+
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.momentum.app.feature_wellbeing.ui.PuenteEmocionalScreen
-import com.momentum.app.feature_wellbeing.ui.DiarioScreen
 import com.momentum.app.feature_wellbeing.ui.ChatApoyoScreen
-import com.momentum.app.feature_wellbeing.ui.ProgresoScreen
+import com.momentum.app.feature_wellbeing.ui.DiarioScreen
 import com.momentum.app.feature_wellbeing.ui.PerfilScreen
+import com.momentum.app.feature_wellbeing.ui.ProgresoScreen
+import com.momentum.app.feature_wellbeing.ui.PuenteEmocionalScreen
 import com.momentum.app.feature_wellbeing.viewmodel.BienestarViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.momentum.app.ui.screens.login.LoginScreen
+import com.momentum.app.ui.screens.register.RegisterScreen
+import com.momentum.app.ui.screens.profile.ProfileScreen
 
-enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil }
+sealed class Route(val route: String) {
+    // Auth routes
+    data object Login : Route("login")
+    data object Register : Route("register")
+    
+    // Main navigation routes
+    data object Home : Route("home") {
+        val destination = PuenteEmocional.route
+    }
+    data object Profile : Route("profile")
 
-object AuthRoutes {
-    const val LOGIN = "login"
-    const val REGISTER = "register"
-    const val HOME = "home"
+    // Feature routes
+    data object PuenteEmocional : Route("puente_emocional")
+    data object Diario : Route("diario")
+    data object Chat : Route("chat")
+    data object Progreso : Route("progreso")
 }
 
 @Composable
-fun MomentumNavHost() {
+fun MomentumNavHost(
+    modifier: Modifier = Modifier,
+    startDestination: String,
+    onLoggedIn: () -> Unit,
+    onLogout: () -> Unit
+) {
     val nav = rememberNavController()
     val sharedViewModel = viewModel<BienestarViewModel>()
     
-    NavHost(navController = nav, startDestination = Routes.PuenteEmocional.name) {
-        // Authentication routes (placeholders) - implement composables in ui/screens/login and ui/screens/register
-        composable(AuthRoutes.LOGIN) {
-            com.momentum.app.ui.screens.login.LoginScreen(
-                onSuccess = { nav.navigate(Routes.PuenteEmocional.name) },
-                onNavigateRegister = { nav.navigate(AuthRoutes.REGISTER) }
+    NavHost(
+        modifier = modifier,
+        navController = nav,
+        startDestination = startDestination
+    ) {
+        // Auth routes
+        composable(Route.Login.route) {
+            LoginScreen(
+                onSuccess = onLoggedIn,
+                onNavigateRegister = { 
+                    nav.navigate(Route.Register.route) {
+                        popUpTo(Route.Login.route) { inclusive = true }
+                    }
+                }
             )
         }
-        composable(AuthRoutes.REGISTER) {
-            com.momentum.app.ui.screens.register.RegisterScreen(
-                onSuccess = { nav.navigate(Routes.PuenteEmocional.name) }
+        composable(Route.Register.route) {
+            RegisterScreen(
+                onSuccess = onLoggedIn
             )
         }
-        composable(Routes.PuenteEmocional.name) { 
-            PuenteEmocionalScreen(navController = nav, viewModel = sharedViewModel) 
+
+        // Handle Home route redirection
+        composable(Route.Home.route) {
+            nav.navigate(Route.Home.destination) {
+                popUpTo(nav.graph.findStartDestination().id)
+                launchSingleTop = true
+            }
         }
-        composable(Routes.Diario.name) { 
-            DiarioScreen(navController = nav, viewModel = sharedViewModel) 
+
+        // Main feature routes
+        composable(Route.PuenteEmocional.route) { 
+            PuenteEmocionalScreen(
+                navController = nav, 
+                viewModel = sharedViewModel
+            )
         }
-        composable(Routes.Chat.name) {
-            ChatApoyoScreen(navController = nav, viewModel = sharedViewModel)
+        composable(Route.Diario.route) { 
+            DiarioScreen(
+                navController = nav, 
+                viewModel = sharedViewModel
+            )
         }
-        composable(Routes.Progreso.name) {
-            ProgresoScreen(navController = nav, viewModel = sharedViewModel)
+        composable(Route.Chat.route) {
+            ChatApoyoScreen(
+                navController = nav, 
+                viewModel = sharedViewModel
+            )
         }
-        composable(Routes.Perfil.name) {
-            PerfilScreen(navController = nav, viewModel = sharedViewModel)
+        composable(Route.Progreso.route) {
+            ProgresoScreen(
+                navController = nav, 
+                viewModel = sharedViewModel
+            )
+        }
+
+        // Profile route
+        composable(Route.Profile.route) {
+            ProfileScreen(
+                onNavigateBack = { nav.popBackStack() },
+                onLogout = onLogout
+            )
         }
     }
 }

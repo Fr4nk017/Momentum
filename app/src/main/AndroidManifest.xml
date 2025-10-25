@@ -1,5 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application android:allowBackup="true" android:label="Momentum" android:theme="@style/Theme.Momentum">
+    <!-- Location permissions -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <!-- Declare that the app uses location features -->
+    <uses-feature 
+        android:name="android.hardware.location.gps" 
+        android:required="false"/>
+
+    <application
+        android:name=".MomentumApplication"
+        android:allowBackup="true"
+        android:label="Momentum"
+        android:theme="@style/Theme.Momentum">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
         </activity>
