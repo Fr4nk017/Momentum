@@ -9,6 +9,7 @@ import com.momentum.app.ui.screens.ChatApoyoScreen
 import com.momentum.app.ui.screens.ProgresoScreen
 import com.momentum.app.ui.screens.PerfilScreen
 import com.momentum.app.ui.screens.BienestarViewModel
+import com.momentum.app.ui.screens.ClientProfileScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil }
@@ -18,6 +19,7 @@ object AuthRoutes {
     const val REGISTER = "register"
     const val PASSWORD_RECOVERY = "password_recovery"
     const val HOME = "home"
+    const val CLIENT_PROFILE = "client_profile"
 }
 
 @Composable
@@ -43,7 +45,7 @@ fun MomentumNavHost() {
             com.momentum.app.ui.screens.register.RegisterScreen(
                 onSuccess = { email, nombre, _ -> 
                     sharedViewModel.inicializarConRegistro(email, nombre)
-                    nav.navigate(Routes.PuenteEmocional.name) {
+                    nav.navigate(AuthRoutes.CLIENT_PROFILE) {
                         popUpTo(AuthRoutes.REGISTER) { inclusive = true }
                     }
                 }
@@ -72,6 +74,9 @@ fun MomentumNavHost() {
         }
         composable(Routes.Perfil.name) {
             PerfilScreen(navController = nav, viewModel = sharedViewModel)
+        }
+        composable(AuthRoutes.CLIENT_PROFILE) {
+            ClientProfileScreen(navController = nav)
         }
     }
 }

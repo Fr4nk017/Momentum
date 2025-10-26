@@ -1,4 +1,4 @@
-package com.momentum.app.feature_wellbeing.ui
+package com.momentum.app.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
