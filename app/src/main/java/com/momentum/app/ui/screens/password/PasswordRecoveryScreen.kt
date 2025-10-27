@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.momentum.app.ui.animations.*
 
 @Composable
 fun PasswordRecoveryScreen(
@@ -50,7 +51,10 @@ fun PasswordRecoveryScreen(
             text = "Recuperar Contraseña",
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
-            color = Color.Black
+            color = Color.Black,
+            modifier = Modifier
+                .animatedFadeIn(delay = 0)
+                .animatedScale(delay = 0)
         )
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -66,7 +70,10 @@ fun PasswordRecoveryScreen(
             )
 
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animatedSlideUp(delay = 120)
+                    .animatedFadeIn(delay = 120),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(
@@ -91,7 +98,8 @@ fun PasswordRecoveryScreen(
                         onClick = { viewModel.sendRecoveryEmail() },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp),
+                            .height(48.dp)
+                            .bounceClick(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black
                         ),
@@ -109,7 +117,10 @@ fun PasswordRecoveryScreen(
         } else {
             // Confirmación de email enviado
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animatedSlideUp(delay = 120)
+                    .animatedFadeIn(delay = 120),
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0xFF4CAF50).copy(alpha = 0.1f)
                 )
@@ -140,7 +151,9 @@ fun PasswordRecoveryScreen(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF2E7D32)
                         ),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .bounceClick()
                     ) {
                         Text("Volver al Login", color = Color.White)
                     }

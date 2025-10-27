@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import com.momentum.app.navigation.Routes
 import androidx.compose.ui.res.stringResource
 import com.momentum.app.R
+import com.momentum.app.ui.animations.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +41,10 @@ fun PuenteEmocionalScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(modifier = Modifier
+                .animatedFadeIn(delay = 0)
+                .animatedScale(delay = 0)
+            ) {
                 Text(
                     text = "¡Hola, ${estado.perfil.nombre}!",
                     style = MaterialTheme.typography.headlineLarge,
@@ -49,6 +53,13 @@ fun PuenteEmocionalScreen(
                 Text(
                     text = estado.mensajeMotivadorDelDia,
                     style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                // Info adicional del usuario
+                Text(
+                    text = estado.perfil.correo,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -75,7 +86,10 @@ fun PuenteEmocionalScreen(
 
         // Mensaje motivacional del día
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .animatedSlideUp(delay = 100)
+                .animatedFadeIn(delay = 100),
             colors = CardDefaults.cardColors(
                 containerColor = Color(0xFF4CAF50).copy(alpha = 0.1f)
             )
@@ -116,7 +130,9 @@ fun PuenteEmocionalScreen(
 
         // Pregunta emocional
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .animatedSlideUp(delay = 200)
         ) {
             Column(
                 modifier = Modifier.padding(20.dp),
@@ -136,6 +152,7 @@ fun PuenteEmocionalScreen(
                     modifier = Modifier.height(120.dp)
                 ) {
                     items(estado.estadosEmocionales) { estadoEmocional ->
+                        val idx = estado.estadosEmocionales.indexOf(estadoEmocional)
                         FilterChip(
                             onClick = { 
                                 viewModel.seleccionarEstadoEmocional(estadoEmocional.nombre)
@@ -147,7 +164,9 @@ fun PuenteEmocionalScreen(
                                 )
                             },
                             selected = estadoEmocional.esSeleccionado,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .animatedFadeIn(delay = getStaggeredDelay(idx, baseDelay = 60))
                         )
                     }
                 }
@@ -156,7 +175,9 @@ fun PuenteEmocionalScreen(
 
         // Sugerencia de respiración
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .animatedSlideUp(delay = 280)
         ) {
             Column(
                 modifier = Modifier.padding(20.dp),
@@ -198,10 +219,39 @@ fun PuenteEmocionalScreen(
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black
-                        )
+                        ),
+                        modifier = Modifier.bounceClick()
                     ) {
                         Text(stringResource(id = R.string.comenzar), color = Color.White)
                     }
+                }
+            }
+        }
+
+        // CTA Profesional de la salud
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animatedSlideUp(delay = 340),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            )
+        ) {
+            Row(
+                modifier = Modifier.padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "¿Necesitas hablar con un profesional?",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Button(
+                    onClick = { navController.navigate(Routes.Chat.name) },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                ) {
+                    Text("Contactar", color = Color.White)
                 }
             }
         }

@@ -17,6 +17,8 @@ import com.momentum.app.navigation.Routes
 import androidx.compose.ui.res.stringResource
 import com.momentum.app.R
 import com.momentum.app.ui.animations.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,11 +40,19 @@ fun DiarioScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = stringResource(id = R.string.diario_title),
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
+                }
+                Text(
+                    text = stringResource(id = R.string.diario_title),
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .animatedFadeIn(delay = 0)
+                        .animatedScale(delay = 0)
+                )
+            }
             
             IconButton(
                 onClick = { navController.navigate(Routes.Perfil.name) }
@@ -79,7 +89,9 @@ fun DiarioScreen(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Black
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .bounceClick()
                 ) {
                     Text(stringResource(id = R.string.guardar), color = Color.White)
                 }

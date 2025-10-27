@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +18,7 @@ import com.momentum.app.navigation.Routes
 import com.momentum.app.navigation.AuthRoutes
 import androidx.compose.ui.res.stringResource
 import com.momentum.app.R
+import com.momentum.app.ui.animations.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,11 +45,22 @@ fun PerfilScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = stringResource(id = R.string.perfil_title),
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Atrás"
+                    )
+                }
+                Text(
+                    text = stringResource(id = R.string.perfil_title),
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .animatedFadeIn(delay = 0)
+                        .animatedScale(delay = 0)
+                )
+            }
             
             IconButton(
                 onClick = { mostrarDialogoCerrarSesion = true }
@@ -62,7 +75,9 @@ fun PerfilScreen(
 
         // Información personal
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .animatedSlideUp(delay = 120)
         ) {
             Column(
                 modifier = Modifier.padding(20.dp),
@@ -142,7 +157,9 @@ fun PerfilScreen(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black
                         ),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .bounceClick()
                     ) {
                         Text(stringResource(id = R.string.editar), color = Color.White)
                     }
@@ -152,7 +169,9 @@ fun PerfilScreen(
 
         // Ajustes rápidos
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .animatedSlideUp(delay = 200)
         ) {
             Column(
                 modifier = Modifier.padding(20.dp),
@@ -216,7 +235,9 @@ fun PerfilScreen(
         // Botón de cerrar sesión
         OutlinedButton(
             onClick = { mostrarDialogoCerrarSesion = true },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .bounceClick(),
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = Color.Red
             ),

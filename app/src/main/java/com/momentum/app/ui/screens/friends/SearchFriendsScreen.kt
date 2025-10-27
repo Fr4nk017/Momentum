@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.momentum.app.ui.animations.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +55,10 @@ fun SearchFriendsScreen(navController: NavController) {
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animatedFadeIn(delay = 0)
+                    .animatedScale(delay = 0),
                 placeholder = { Text("Buscar por nombre o email...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
@@ -96,7 +100,7 @@ fun SearchFriendsScreen(navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(searchResults) { user ->
-                        SearchResultCard(user = user)
+                        SearchResultCard(user = user, modifier = Modifier.animatedSlideUp())
                     }
                 }
             }
@@ -105,9 +109,9 @@ fun SearchFriendsScreen(navController: NavController) {
 }
 
 @Composable
-fun SearchResultCard(user: Friend) {
+fun SearchResultCard(user: Friend, modifier: Modifier = Modifier) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -146,7 +150,8 @@ fun SearchResultCard(user: Friend) {
             
             Button(
                 onClick = { /* Send friend request */ },
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.bounceClick()
             ) {
                 Icon(
                     Icons.Default.PersonAdd,

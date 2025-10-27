@@ -22,6 +22,7 @@ import com.momentum.app.navigation.Routes
 import kotlinx.coroutines.launch
 import androidx.compose.ui.res.stringResource
 import com.momentum.app.R
+import com.momentum.app.ui.animations.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +62,10 @@ fun ChatApoyoScreen(
                 Text(
                     text = stringResource(id = R.string.chat_apoyo_title),
                     style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .animatedFadeIn(delay = 0)
+                        .animatedScale(delay = 0)
                 )
                 
                 IconButton(
@@ -110,7 +114,8 @@ fun ChatApoyoScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .animatedSlideUp(delay = 120),
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -146,7 +151,9 @@ fun ChatApoyoScreen(
                     viewModel.onMensajeNuevoChange("Necesito motivación")
                     viewModel.enviarMensaje()
                 },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .bounceClick(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
             ) {
                 Text("Motivación", color = Color.White)
@@ -157,7 +164,9 @@ fun ChatApoyoScreen(
                     viewModel.onMensajeNuevoChange("Dame un consejo")
                     viewModel.enviarMensaje()
                 },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .bounceClick(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
             ) {
                 Text("Consejo", color = Color.White)

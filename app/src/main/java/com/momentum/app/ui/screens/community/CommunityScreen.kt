@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import com.momentum.app.ui.animations.*
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
 data class CommunityPost(
     val id: Long,
@@ -81,6 +82,11 @@ fun CommunityScreen(navController: NavController) {
         topBar = {
             TopAppBar(
                 title = { Text("Comunidad") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
+                    }
+                },
                 actions = {
                     IconButton(onClick = { showNewPostDialog = true }) {
                         Icon(Icons.Default.Add, contentDescription = "Nueva publicación")

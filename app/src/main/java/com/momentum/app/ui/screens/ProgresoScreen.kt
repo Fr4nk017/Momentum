@@ -17,6 +17,9 @@ import com.momentum.app.ui.screens.BienestarViewModel
 import com.momentum.app.navigation.Routes
 import androidx.compose.ui.res.stringResource
 import com.momentum.app.R
+import com.momentum.app.ui.animations.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,11 +41,19 @@ fun ProgresoScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = stringResource(id = R.string.progreso_title),
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
+                }
+                Text(
+                    text = stringResource(id = R.string.progreso_title),
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .animatedFadeIn(delay = 0)
+                        .animatedScale(delay = 0)
+                )
+            }
             
             IconButton(
                 onClick = { navController.navigate(Routes.Perfil.name) }
@@ -56,7 +67,10 @@ fun ProgresoScreen(
         }
 
         // Resumen mensual simplificado
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .animatedSlideUp(delay = 120)
+    ) {
             Column(modifier = Modifier.padding(20.dp)) {
         Text(stringResource(id = R.string.resumen_mensual), style = MaterialTheme.typography.titleLarge)
 
@@ -78,7 +92,10 @@ fun ProgresoScreen(
         }
 
         // Estados frecuentes simplificado
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .animatedSlideUp(delay = 200)
+    ) {
             Column(modifier = Modifier.padding(20.dp)) {
         Text(stringResource(id = R.string.estados_mas_frecuentes), style = MaterialTheme.typography.titleLarge)
                 
