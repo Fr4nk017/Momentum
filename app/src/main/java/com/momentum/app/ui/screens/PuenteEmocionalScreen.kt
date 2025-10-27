@@ -17,6 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.momentum.app.navigation.Routes
+import androidx.compose.ui.res.stringResource
+import com.momentum.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,7 +107,7 @@ fun PuenteEmocionalScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = "Nuevo mensaje",
+                        contentDescription = null,
                         tint = Color(0xFF2E7D32)
                     )
                 }
@@ -121,7 +123,7 @@ fun PuenteEmocionalScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "¿Cómo te sientes hoy?",
+                    text = stringResource(id = R.string.como_te_sientes),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Medium
                 )
@@ -161,13 +163,13 @@ fun PuenteEmocionalScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Sugerencia de hoy",
+                    text = stringResource(id = R.string.sugerencia_hoy),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Medium
                 )
                 
                 Text(
-                    text = "Respiración 4-4-6 • 3 repeticiones\nRespira y mira por la ventana 1 min.",
+                    text = stringResource(id = R.string.respiracion_446) + "\n" + stringResource(id = R.string.respiracion_descripcion),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -198,7 +200,7 @@ fun PuenteEmocionalScreen(
                             containerColor = Color.Black
                         )
                     ) {
-                        Text("Comenzar", color = Color.White)
+                        Text(stringResource(id = R.string.comenzar), color = Color.White)
                     }
                 }
             }

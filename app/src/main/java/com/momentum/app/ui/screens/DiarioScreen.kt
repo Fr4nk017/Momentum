@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.momentum.app.ui.screens.BienestarViewModel
 import com.momentum.app.navigation.Routes
+import androidx.compose.ui.res.stringResource
+import com.momentum.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +38,7 @@ fun DiarioScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Diario",
+                text = stringResource(id = R.string.diario_title),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -63,7 +65,7 @@ fun DiarioScreen(
                 OutlinedTextField(
                     value = estado.entradaDiarioNueva,
                     onValueChange = viewModel::onEntradaDiarioChange,
-                    placeholder = { Text("Escribe cómo te sientes...") },
+                    placeholder = { Text(stringResource(id = R.string.escribe_como_te_sientes)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(120.dp),
@@ -78,7 +80,7 @@ fun DiarioScreen(
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Guardar", color = Color.White)
+                    Text(stringResource(id = R.string.guardar), color = Color.White)
                 }
             }
         }
@@ -127,7 +129,7 @@ fun DiarioScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Aún no tienes entradas en tu diario\n¡Escribe la primera!",
+                    text = stringResource(id = R.string.sin_entradas_diario),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

@@ -4,7 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.momentum.app.navigation.Routes
 import com.momentum.app.navigation.AuthRoutes
+import androidx.compose.ui.res.stringResource
+import com.momentum.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +44,7 @@ fun PerfilScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Perfil",
+                text = stringResource(id = R.string.perfil_title),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -51,7 +53,7 @@ fun PerfilScreen(
                 onClick = { mostrarDialogoCerrarSesion = true }
             ) {
                 Icon(
-                    imageVector = Icons.Default.ExitToApp,
+                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                     contentDescription = "Cerrar sesión",
                     tint = Color.Red
                 )
@@ -70,21 +72,21 @@ fun PerfilScreen(
                     OutlinedTextField(
                         value = nombreTemp,
                         onValueChange = { nombreTemp = it },
-                        label = { Text("Nombre") },
+                        label = { Text(stringResource(id = R.string.nombre)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                     
                     OutlinedTextField(
                         value = apellidoTemp,
                         onValueChange = { apellidoTemp = it },
-                        label = { Text("Apellido") },
+                        label = { Text(stringResource(id = R.string.apellido)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                     
                     OutlinedTextField(
                         value = correoTemp,
                         onValueChange = { correoTemp = it },
-                        label = { Text("Correo electrónico") },
+                        label = { Text(stringResource(id = R.string.correo_electronico)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                     
@@ -101,7 +103,7 @@ fun PerfilScreen(
                             },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text("Cancelar")
+                            Text(stringResource(id = R.string.cancelar))
                         }
                         
                         Button(
@@ -114,7 +116,7 @@ fun PerfilScreen(
                                 containerColor = Color.Black
                             )
                         ) {
-                            Text("Guardar", color = Color.White)
+                            Text(stringResource(id = R.string.guardar), color = Color.White)
                         }
                     }
                 } else {
@@ -142,7 +144,7 @@ fun PerfilScreen(
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Editar", color = Color.White)
+                        Text(stringResource(id = R.string.editar), color = Color.White)
                     }
                 }
             }
@@ -157,7 +159,7 @@ fun PerfilScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Ajustes rápidos",
+                    text = stringResource(id = R.string.ajustes_rapidos),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -169,7 +171,7 @@ fun PerfilScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "• Recordatorios cada 3 h",
+                        text = stringResource(id = R.string.recordatorios_3h),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     
@@ -186,7 +188,12 @@ fun PerfilScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "• Notificaciones: ${if (estado.perfil.notificacionesActivadas) "activadas" else "desactivadas"}",
+                        text = stringResource(
+                            id = R.string.notificaciones_estado,
+                            stringResource(
+                                id = if (estado.perfil.notificacionesActivadas) R.string.notificaciones_activadas else R.string.notificaciones_desactivadas
+                            )
+                        ),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     
@@ -198,7 +205,7 @@ fun PerfilScreen(
                 
                 // Número de emergencia
                 Text(
-                    text = "• Número emergencia: ${estado.perfil.numeroEmergencia}",
+                    text = stringResource(id = R.string.numero_emergencia, estado.perfil.numeroEmergencia),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -216,11 +223,11 @@ fun PerfilScreen(
             border = BorderStroke(1.dp, Color.Red)
         ) {
             Icon(
-                imageVector = Icons.Default.ExitToApp,
+                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                 contentDescription = "Cerrar sesión",
                 modifier = Modifier.padding(end = 8.dp)
             )
-            Text("Cerrar Sesión")
+            Text(stringResource(id = R.string.cerrar_sesion))
         }
 
         // Bottom Navigation
@@ -234,27 +241,29 @@ fun PerfilScreen(
     if (mostrarDialogoCerrarSesion) {
         AlertDialog(
             onDismissRequest = { mostrarDialogoCerrarSesion = false },
-            title = { Text("Cerrar Sesión") },
-            text = { Text("¿Estás seguro de que quieres cerrar sesión?") },
+            title = { Text(stringResource(id = R.string.cerrar_sesion)) },
+            text = { Text(stringResource(id = R.string.confirmar_cerrar_sesion)) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         viewModel.cerrarSesion {
                             navController.navigate(AuthRoutes.LOGIN) {
-                                popUpTo(0) { inclusive = true }
+                                // Limpia el back stack hasta la ruta de login y evita duplicados
+                                popUpTo(AuthRoutes.LOGIN) { inclusive = true }
+                                launchSingleTop = true
                             }
                         }
                         mostrarDialogoCerrarSesion = false
                     }
                 ) {
-                    Text("Cerrar Sesión", color = Color.Red)
+                    Text(stringResource(id = R.string.cerrar_sesion), color = Color.Red)
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { mostrarDialogoCerrarSesion = false }
                 ) {
-                    Text("Cancelar")
+                    Text(stringResource(id = R.string.cancelar))
                 }
             }
         )

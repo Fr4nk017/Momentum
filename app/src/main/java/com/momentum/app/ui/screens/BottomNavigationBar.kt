@@ -17,6 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.momentum.app.navigation.Routes
+import androidx.compose.ui.res.stringResource
+import com.momentum.app.R
 
 @Composable
 fun BottomNavigationBar(
@@ -40,35 +42,35 @@ fun BottomNavigationBar(
         ) {
             BottomNavItem(
                 icon = Icons.Default.Home,
-                label = "Inicio",
+                label = stringResource(id = R.string.nav_puente_emocional),
                 isSelected = currentRoute == Routes.PuenteEmocional.name,
                 onClick = { navController.navigate(Routes.PuenteEmocional.name) }
             )
             
             BottomNavItem(
                 icon = Icons.AutoMirrored.Filled.MenuBook,
-                label = "Diario",
+                label = stringResource(id = R.string.nav_diario),
                 isSelected = currentRoute == Routes.Diario.name,
                 onClick = { navController.navigate(Routes.Diario.name) }
             )
             
             BottomNavItem(
                 icon = Icons.AutoMirrored.Filled.Chat,
-                label = "Chat",
+                label = stringResource(id = R.string.nav_chat),
                 isSelected = currentRoute == Routes.Chat.name,
                 onClick = { navController.navigate(Routes.Chat.name) }
             )
             
             BottomNavItem(
                 icon = Icons.AutoMirrored.Filled.TrendingUp,
-                label = "Progreso",
+                label = stringResource(id = R.string.nav_progreso),
                 isSelected = currentRoute == Routes.Progreso.name,
                 onClick = { navController.navigate(Routes.Progreso.name) }
             )
             
             BottomNavItem(
                 icon = Icons.Default.Person,
-                label = "Perfil",
+                label = stringResource(id = R.string.nav_perfil),
                 isSelected = currentRoute == Routes.Perfil.name,
                 onClick = { navController.navigate(Routes.Perfil.name) }
             )

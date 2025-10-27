@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.momentum.app.ui.screens.BienestarViewModel
 import com.momentum.app.navigation.Routes
+import androidx.compose.ui.res.stringResource
+import com.momentum.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +39,7 @@ fun ProgresoScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Progreso",
+                text = stringResource(id = R.string.progreso_title),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -54,12 +56,12 @@ fun ProgresoScreen(
         }
 
         // Resumen mensual simplificado
-        Card(modifier = Modifier.fillMaxWidth()) {
+    Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(20.dp)) {
-                Text("Resumen mensual", style = MaterialTheme.typography.titleLarge)
-                
-                Text("Registros: ${estado.entradasDiario.size}")
-                Text("Sesiones respiración: ${estado.estadisticas.sesionesRespiracion}")
+        Text(stringResource(id = R.string.resumen_mensual), style = MaterialTheme.typography.titleLarge)
+
+        Text(stringResource(id = R.string.registros_count, estado.entradasDiario.size))
+        Text(stringResource(id = R.string.sesiones_respiracion_count, estado.estadisticas.sesionesRespiracion))
                 
                 // Gráfico simple
                 Row(modifier = Modifier.fillMaxWidth()) {
@@ -76,9 +78,9 @@ fun ProgresoScreen(
         }
 
         // Estados frecuentes simplificado
-        Card(modifier = Modifier.fillMaxWidth()) {
+    Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(20.dp)) {
-                Text("Estados más frecuentes", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(id = R.string.estados_mas_frecuentes), style = MaterialTheme.typography.titleLarge)
                 
                 if (estado.entradasDiario.isNotEmpty()) {
                     val estados = estado.entradasDiario

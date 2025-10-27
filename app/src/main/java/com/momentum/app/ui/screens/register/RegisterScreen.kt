@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.momentum.app.R
 
 @Composable
 fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: RegisterViewModel = viewModel()) {
@@ -39,7 +41,7 @@ fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: Regis
     ) {
         // App Logo/Title
         Text(
-            text = "Momentum",
+            text = stringResource(id = R.string.app_name),
             style = MaterialTheme.typography.displayMedium,
             fontWeight = FontWeight.Bold,
             color = Color.Black,
@@ -47,7 +49,7 @@ fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: Regis
         )
         
         Text(
-            text = "Crea tu cuenta para comenzar tu viaje de bienestar",
+            text = stringResource(id = R.string.register_subtitle),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -64,7 +66,7 @@ fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: Regis
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Registro",
+                    text = stringResource(id = R.string.register_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -74,9 +76,9 @@ fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: Regis
                 OutlinedTextField(
                     value = form.name,
                     onValueChange = viewModel::onNameChange,
-                    label = { Text("Nombre completo") },
+                    label = { Text(stringResource(id = R.string.nombre)) },
                     leadingIcon = { Icon(Icons.Default.Person, contentDescription = "Nombre") },
-                    placeholder = { Text("Ej: Juan Pérez") },
+                    placeholder = { Text(stringResource(id = R.string.placeholder_full_name)) },
                     modifier = Modifier.fillMaxWidth(),
                     isError = errors.name != null,
                     keyboardOptions = KeyboardOptions(
@@ -98,9 +100,9 @@ fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: Regis
                 OutlinedTextField(
                     value = form.email,
                     onValueChange = viewModel::onEmailChange,
-                    label = { Text("Correo electrónico") },
+                    label = { Text(stringResource(id = R.string.correo_electronico)) },
                     leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email") },
-                    placeholder = { Text("Ej: usuario@ejemplo.com") },
+                    placeholder = { Text(stringResource(id = R.string.placeholder_email)) },
                     modifier = Modifier.fillMaxWidth(),
                     isError = errors.email != null,
                     keyboardOptions = KeyboardOptions(
@@ -122,9 +124,9 @@ fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: Regis
                 OutlinedTextField(
                     value = form.password,
                     onValueChange = viewModel::onPasswordChange,
-                    label = { Text("Contraseña") },
+                    label = { Text(stringResource(id = R.string.label_password)) },
                     leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Password") },
-                    placeholder = { Text("Mínimo 6 caracteres") },
+                    placeholder = { Text(stringResource(id = R.string.placeholder_password_min)) },
                     modifier = Modifier.fillMaxWidth(),
                     isError = errors.password != null,
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -155,9 +157,9 @@ fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: Regis
                 OutlinedTextField(
                     value = form.confirmPassword,
                     onValueChange = viewModel::onConfirmPasswordChange,
-                    label = { Text("Confirmar contraseña") },
+                    label = { Text(stringResource(id = R.string.label_confirm_password)) },
                     leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Confirm Password") },
-                    placeholder = { Text("Repite tu contraseña") },
+                    placeholder = { Text(stringResource(id = R.string.placeholder_confirm_password)) },
                     modifier = Modifier.fillMaxWidth(),
                     isError = errors.confirmPassword != null,
                     visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -223,7 +225,7 @@ fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: Regis
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = "Crear Cuenta",
+                        text = stringResource(id = R.string.btn_register),
                         color = Color.White,
                         fontWeight = FontWeight.Medium
                     )

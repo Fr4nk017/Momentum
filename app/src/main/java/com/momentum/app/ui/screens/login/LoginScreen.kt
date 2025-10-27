@@ -21,6 +21,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.res.stringResource
+import com.momentum.app.R
 
 /**
  * LoginScreen composable con validación visual mínima.
@@ -46,7 +48,7 @@ fun LoginScreen(
     ) {
         // App Logo/Title
         Text(
-            text = "Momentum",
+            text = stringResource(id = R.string.app_name),
             style = MaterialTheme.typography.displayMedium,
             fontWeight = FontWeight.Bold,
             color = Color.Black,
@@ -54,7 +56,7 @@ fun LoginScreen(
         )
         
         Text(
-            text = "Bienestar emocional a tu alcance",
+            text = stringResource(id = R.string.login_subtitle),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -71,7 +73,7 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Iniciar Sesión",
+                    text = stringResource(id = R.string.login_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -81,7 +83,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = form.email,
                     onValueChange = viewModel::onEmailChange,
-                    label = { Text("Correo electrónico") },
+                    label = { Text(stringResource(id = R.string.correo_electronico)) },
                     leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email") },
                     modifier = Modifier.fillMaxWidth(),
                     isError = errors.email != null,
@@ -104,7 +106,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = form.password,
                     onValueChange = viewModel::onPasswordChange,
-                    label = { Text("Contraseña") },
+                    label = { Text(stringResource(id = R.string.label_password)) },
                     leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Password") },
                     modifier = Modifier.fillMaxWidth(),
                     isError = errors.password != null,
@@ -146,7 +148,7 @@ fun LoginScreen(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = "Iniciar Sesión",
+                        text = stringResource(id = R.string.btn_login),
                         color = Color.White,
                         fontWeight = FontWeight.Medium
                     )
@@ -159,12 +161,12 @@ fun LoginScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "¿No tienes cuenta? ",
+                        text = stringResource(id = R.string.link_no_account) + " ",
                         style = MaterialTheme.typography.bodyMedium
                     )
                     TextButton(onClick = onNavigateRegister) {
                         Text(
-                            text = "Regístrate",
+                            text = stringResource(id = R.string.link_register),
                             color = Color.Black,
                             fontWeight = FontWeight.Medium
                         )
@@ -177,7 +179,7 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "¿Olvidaste tu contraseña?",
+                        text = stringResource(id = R.string.link_forgot_password),
                         color = Color.Gray
                     )
                 }

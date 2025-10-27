@@ -1,4 +1,4 @@
-package com.momentum.app.feature_wellbeing.ui
+package com.momentum.app.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.momentum.app.viewmodel.ClientProfileViewModel
-import com.momentum.app.navigation.AuthRoutes
+import com.momentum.app.navigation.Routes
 
 /**
  * Pantalla para capturar el perfil extendido del cliente.
@@ -141,8 +141,8 @@ fun ClientProfileScreen(navController: NavController, viewModel: ClientProfileVi
 
         Button(onClick = {
             if (viewModel.validate()) {
-                // Guardar (en el ViewModel ya está) y navegar al home
-                navController.navigate(AuthRoutes.HOME)
+                // Guardar (en el ViewModel ya está) y navegar a la pantalla principal
+                navController.navigate(Routes.PuenteEmocional.name)
             }
         }, modifier = Modifier.padding(top = 16.dp)) {
             Text("Guardar y continuar")

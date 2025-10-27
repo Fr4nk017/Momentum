@@ -1,12 +1,17 @@
 package com.momentum.app.ui.screens.register
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.momentum.app.data.DatabaseProvider
+import com.momentum.app.data.repository.ClientRepository
+import com.momentum.app.model.forms.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import com.momentum.app.model.forms.*
+import kotlinx.coroutines.launch
 
-class RegisterViewModel : ViewModel() {
+class RegisterViewModel(application: Application) : AndroidViewModel(application) {
     private val _form = MutableStateFlow(RegisterForm())
     val form: StateFlow<RegisterForm> = _form
 
@@ -18,11 +23,21 @@ class RegisterViewModel : ViewModel() {
     fun onPasswordChange(v: String) { _form.update { it.copy(password = v) } }
     fun onConfirmPasswordChange(v: String) { _form.update { it.copy(confirmPassword = v) } }
 
+    private val repository: ClientRepository by lazy {
+        DatabaseProvider.clientRepository(getApplication())
+    }
+
     fun submit(onSuccess: (String, String, String) -> Unit, onFailure: (RegisterErrors) -> Unit) {
         val errs = _form.value.validate()
         _errors.value = errs
         if (errs.isValid()) {
-            onSuccess(_form.value.email, _form.value.name, "")
+            val name = _form.value.name
+            val email = _form.value.email
+            viewModelScope.launch {
+                runCatching { repository.insert(name = name, email = email) }
+                    .onFailure { /* log or set an error state if desired */ }
+            }
+            onSuccess(email, name, "")
         } else {
             onFailure(errs)
         }

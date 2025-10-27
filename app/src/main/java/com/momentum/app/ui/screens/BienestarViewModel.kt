@@ -1,9 +1,12 @@
 package com.momentum.app.ui.screens
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.momentum.app.data.DatabaseProvider
 import com.momentum.app.model.forms.*
 import kotlinx.coroutines.launch
+import com.momentum.app.data.store.EmotionStateStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -20,7 +23,7 @@ import java.util.*
  * @author Francisco Leví Villegas
  * @since 2025-10-05
  */
-class BienestarViewModel : ViewModel() {
+class BienestarViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _estado = MutableStateFlow(BienestarUiState())
     val estado: StateFlow<BienestarUiState> = _estado
@@ -57,15 +60,44 @@ class BienestarViewModel : ViewModel() {
                 }
             )
         }
+
+        // Persistir última selección para notificaciones
+        viewModelScope.launch {
+            runCatching { EmotionStateStore(getApplication()).setLastState(nombreEstado) }
+                .onFailure { /* log si se desea */ }
+        }
     }
 
     // Simplificar inicialización de usuario
+    private val repository by lazy { DatabaseProvider.clientRepository(getApplication()) }
+
     fun inicializarConUsuario(email: String) {
         val nombre = email.substringBefore("@")
         _estado.update { it.copy(
             perfil = it.perfil.copy(nombre = nombre, correo = email),
             mensajeMotivadorDelDia = mensajesMotivadores.random()
         )}
+
+        // Intentar cargar desde la base de datos si existe
+        viewModelScope.launch {
+            runCatching { repository.getByEmail(email) }
+                .onSuccess { entity ->
+                    if (entity != null) {
+                        val partes = entity.name.split(" ")
+                        val nombreDb = partes.firstOrNull() ?: entity.name
+                        val apellidoDb = partes.drop(1).joinToString(" ")
+                        _estado.update { estadoActual ->
+                            estadoActual.copy(
+                                perfil = estadoActual.perfil.copy(
+                                    nombre = nombreDb,
+                                    apellido = apellidoDb,
+                                    correo = email
+                                )
+                            )
+                        }
+                    }
+                }
+        }
     }
 
     fun inicializarConRegistro(email: String, nombreCompleto: String) {
@@ -347,6 +379,13 @@ class BienestarViewModel : ViewModel() {
                     correo = correo
                 )
             )
+        }
+
+        // Persistir cambios en BD (nombre completo: nombre + apellido)
+        val nombreCompleto = listOf(nombre, apellido).filter { it.isNotBlank() }.joinToString(" ")
+        viewModelScope.launch {
+            runCatching { repository.upsert(name = nombreCompleto.ifBlank { nombre }, email = correo) }
+                .onFailure { /* log si se desea */ }
         }
     }
 

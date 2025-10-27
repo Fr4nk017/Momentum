@@ -20,6 +20,8 @@ import androidx.navigation.NavController
 import com.momentum.app.ui.screens.BienestarViewModel
 import com.momentum.app.navigation.Routes
 import kotlinx.coroutines.launch
+import androidx.compose.ui.res.stringResource
+import com.momentum.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,7 +59,7 @@ fun ChatApoyoScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Chat de apoyo",
+                    text = stringResource(id = R.string.chat_apoyo_title),
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -115,7 +117,7 @@ fun ChatApoyoScreen(
                 OutlinedTextField(
                     value = estado.mensajeNuevo,
                     onValueChange = viewModel::onMensajeNuevoChange,
-                    placeholder = { Text("Escribe un mensaje...") },
+                    placeholder = { Text(stringResource(id = R.string.escribe_mensaje)) },
                     modifier = Modifier.weight(1f),
                     maxLines = 3
                 )
@@ -126,7 +128,7 @@ fun ChatApoyoScreen(
                 ) {
                     Icon(
                         Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "Enviar"
+                        contentDescription = stringResource(id = R.string.desc_enviar)
                     )
                 }
             }
