@@ -9,9 +9,14 @@ import com.momentum.app.ui.screens.ChatApoyoScreen
 import com.momentum.app.ui.screens.ProgresoScreen
 import com.momentum.app.ui.screens.PerfilScreen
 import com.momentum.app.ui.screens.BienestarViewModel
+import com.momentum.app.ui.screens.profile.UserProfileScreen
+import com.momentum.app.ui.screens.friends.FriendsScreen
+import com.momentum.app.ui.screens.friends.SearchFriendsScreen
+import com.momentum.app.ui.screens.community.CommunityScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.momentum.app.ui.animations.*
 
-enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil }
+enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends }
 
 object AuthRoutes {
     const val LOGIN = "login"
@@ -58,20 +63,97 @@ fun MomentumNavHost() {
         }
         
         // Main app routes
-        composable(Routes.PuenteEmocional.name) { 
+        composable(
+            Routes.PuenteEmocional.name,
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) { 
             PuenteEmocionalScreen(navController = nav, viewModel = sharedViewModel) 
         }
-        composable(Routes.Diario.name) { 
+        composable(
+            Routes.Diario.name,
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) { 
             DiarioScreen(navController = nav, viewModel = sharedViewModel) 
         }
-        composable(Routes.Chat.name) {
+        composable(
+            Routes.Chat.name,
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) {
             ChatApoyoScreen(navController = nav, viewModel = sharedViewModel)
         }
-        composable(Routes.Progreso.name) {
+        composable(
+            Routes.Progreso.name,
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) {
             ProgresoScreen(navController = nav, viewModel = sharedViewModel)
         }
-        composable(Routes.Perfil.name) {
+        composable(
+            Routes.Perfil.name,
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) {
             PerfilScreen(navController = nav, viewModel = sharedViewModel)
+        }
+        
+        // New social features routes
+        composable(
+            Routes.UserProfile.name,
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) {
+            UserProfileScreen(navController = nav)
+        }
+        composable(
+            Routes.Community.name,
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) {
+            CommunityScreen(navController = nav)
+        }
+        composable(
+            Routes.Friends.name,
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) {
+            FriendsScreen(navController = nav)
+        }
+        composable(
+            "friends",
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) {
+            FriendsScreen(navController = nav)
+        }
+        composable(
+            "search_friends",
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) {
+            SearchFriendsScreen(navController = nav)
         }
     }
 }

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.momentum.app.R
+import com.momentum.app.ui.animations.*
 
 @Composable
 fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: RegisterViewModel = viewModel()) {
@@ -45,7 +46,10 @@ fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: Regis
             style = MaterialTheme.typography.displayMedium,
             fontWeight = FontWeight.Bold,
             color = Color.Black,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .animatedFadeIn(delay = 0)
+                .animatedScale(delay = 0)
         )
         
         Text(
@@ -53,12 +57,17 @@ fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: Regis
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 32.dp)
+            modifier = Modifier
+                .padding(bottom = 32.dp)
+                .animatedFadeIn(delay = 100)
         )
 
         // Register Form Card
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .animatedSlideUp(delay = 200)
+                .animatedFadeIn(delay = 200),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Column(
@@ -218,7 +227,8 @@ fun RegisterScreen(onSuccess: (String, String, String) -> Unit, viewModel: Regis
                     onClick = { viewModel.submit(onSuccess = onSuccess, onFailure = {}) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
+                        .height(48.dp)
+                        .bounceClick(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Black
                     ),

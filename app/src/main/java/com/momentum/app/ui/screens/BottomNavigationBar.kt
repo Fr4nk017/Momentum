@@ -1,5 +1,6 @@
 package com.momentum.app.ui.screens
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -9,8 +10,10 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -55,10 +58,10 @@ fun BottomNavigationBar(
             )
             
             BottomNavItem(
-                icon = Icons.AutoMirrored.Filled.Chat,
-                label = stringResource(id = R.string.nav_chat),
-                isSelected = currentRoute == Routes.Chat.name,
-                onClick = { navController.navigate(Routes.Chat.name) }
+                icon = Icons.Default.People,
+                label = "Comunidad",
+                isSelected = currentRoute == Routes.Community.name,
+                onClick = { navController.navigate(Routes.Community.name) }
             )
             
             BottomNavItem(
@@ -85,10 +88,21 @@ fun BottomNavItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
+    val scale by animateFloatAsState(
+        targetValue = if (isSelected) 1.1f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "navItemScale"
+    )
+    
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(4.dp)
+        modifier = Modifier
+            .padding(4.dp)
+            .scale(scale)
     ) {
         IconButton(
             onClick = onClick,

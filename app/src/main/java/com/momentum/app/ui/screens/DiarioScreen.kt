@@ -16,6 +16,7 @@ import com.momentum.app.ui.screens.BienestarViewModel
 import com.momentum.app.navigation.Routes
 import androidx.compose.ui.res.stringResource
 import com.momentum.app.R
+import com.momentum.app.ui.animations.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,7 +94,13 @@ fun DiarioScreen(
             ) {
                 items(estado.entradasDiario) { entrada ->
                     Card(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .swipeToDismiss(
+                                onDismiss = {
+                                    viewModel.eliminarEntradaDiario(entrada)
+                                }
+                            )
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),

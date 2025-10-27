@@ -340,6 +340,14 @@ class BienestarViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    fun eliminarEntradaDiario(entrada: EntradaDiario) {
+        _estado.update { estadoActual ->
+            estadoActual.copy(
+                entradasDiario = estadoActual.entradasDiario.filter { it.id != entrada.id }
+            )
+        }
+    }
+
     // Simplificar ejercicio de respiración
     fun iniciarEjercicioRespiracion() {
         _estado.update { it.copy(ejercicioRespiracionActivo = true) }
