@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -344,11 +345,33 @@ fun PerfilScreen(
                     style = MaterialTheme.typography.bodyLarge
                 )
 
+                // Modo oscuro
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Modo oscuro",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    
+                    Switch(
+                        checked = estado.perfil.modoOscuro,
+                        onCheckedChange = { viewModel.toggleModoOscuro() }
+                    )
+                }
+
                 Button(
-                    onClick = { navController.navigate(com.momentum.app.navigation.Routes.Places.name) },
+                    onClick = { navController.navigate(Routes.Places.name) },
                     modifier = Modifier.fillMaxWidth().bounceClick(),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
+                    Icon(
+                        imageVector = Icons.Default.Place,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
                     Text("Explorar lugares cercanos", color = Color.White)
                 }
             }

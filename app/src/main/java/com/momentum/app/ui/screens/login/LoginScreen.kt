@@ -38,7 +38,17 @@ fun LoginScreen(
 ) {
     val form by viewModel.form.collectAsState()
     val errors by viewModel.errors.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
+    var showErrorSnackbar by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
+    if (showErrorSnackbar) {
+        LaunchedEffect(Unit) {
+            kotlinx.coroutines.delay(3000)
+            showErrorSnackbar = false
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -147,7 +157,15 @@ fun LoginScreen(
 
                 // Login Button
                 Button(
-                    onClick = { viewModel.submit(onSuccess = onSuccess, onFailure = {}) },
+                    onClick = {
+                        viewModel.submit(
+                            onSuccess = onSuccess,
+                            onFailure = { errs ->
+                                errorMessage = errs.email?.message ?: errs.password?.message ?: "Error de autenticación"
+                                showErrorSnackbar = true
+                            }
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
@@ -155,13 +173,22 @@ fun LoginScreen(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Black
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    enabled = !isLoading
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.btn_login),
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium
-                    )
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(id = R.string.btn_login),
+                            color = Color.White,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
 
                 // Register Link
@@ -193,6 +220,19 @@ fun LoginScreen(
                         color = Color.Gray
                     )
                 }
+            }
+        }
+
+        if (showErrorSnackbar) {
+            Snackbar(
+                modifier = Modifier.padding(16.dp),
+                action = {
+                    TextButton(onClick = { showErrorSnackbar = false }) {
+                        Text("OK")
+                    }
+                }
+            ) {
+                Text(errorMessage)
             }
         }
     }

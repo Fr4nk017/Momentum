@@ -249,9 +249,46 @@ fun PuenteEmocionalScreen(
                 )
                 Button(
                     onClick = { navController.navigate(Routes.Chat.name) },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+                    modifier = Modifier.bounceClick()
                 ) {
                     Text("Contactar", color = Color.White)
+                }
+            }
+        }
+
+        // CTA Lugares de relajación al aire libre
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animatedSlideUp(delay = 400),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF4CAF50).copy(alpha = 0.15f)
+            )
+        ) {
+            Row(
+                modifier = Modifier.padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Relájate al aire libre",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "Encuentra parques y senderos cercanos",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Button(
+                    onClick = { navController.navigate(Routes.Places.name) },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                    modifier = Modifier.bounceClick()
+                ) {
+                    Text("Explorar", color = Color.White)
                 }
             }
         }

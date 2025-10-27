@@ -7,6 +7,7 @@ import com.momentum.app.data.repository.ClientRepository
 import com.momentum.app.data.repository.UserRepository
 import com.momentum.app.data.repository.FriendRepository
 import com.momentum.app.data.repository.CommunityRepository
+import com.momentum.app.data.repository.RecentPlaceRepository
 
 object DatabaseProvider {
     @Volatile
@@ -40,5 +41,9 @@ object DatabaseProvider {
 
     fun communityRepository(context: Context): CommunityRepository {
         return CommunityRepository(getDatabase(context).communityPostDao())
+    }
+
+    fun recentPlaceRepository(context: Context): RecentPlaceRepository {
+        return RecentPlaceRepository(getDatabase(context).recentPlaceDao())
     }
 }

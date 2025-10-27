@@ -8,10 +8,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Healing
+import androidx.compose.material.icons.filled.Park
+import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,11 +26,18 @@ import com.google.android.gms.location.*
 import com.momentum.app.ui.animations.*
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlacesScreen(navController: NavController) {
+fun PlacesScreen(navController: NavController, viewModel: PlacesViewModel = viewModel()) {
     val context = LocalContext.current
+    val recentPlaces by viewModel.recentPlaces.collectAsState()
 
     var hasFineLocation by remember { mutableStateOf(false) }
     var hasCoarseLocation by remember { mutableStateOf(false) }
@@ -93,6 +105,11 @@ fun PlacesScreen(navController: NavController) {
         ContextCompat.startActivity(context, intent, null)
     }
 
+    fun recordRecentPlace(name: String, category: String) {
+        viewModel.addRecentPlace(name, category)
+        openMapsQuery(name)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -121,20 +138,70 @@ fun PlacesScreen(navController: NavController) {
                     .animatedScale()
             )
 
+            // Recent places section
+            if (recentPlaces.isNotEmpty()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth().animatedSlideUp(40)
+                ) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Búsquedas recientes", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                            TextButton(onClick = { viewModel.clearAllRecent() }) {
+                                Text("Limpiar", style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
+                        LazyColumn(
+                            modifier = Modifier.heightIn(max = 200.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            items(recentPlaces) { place ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = place.name,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                        Text(
+                                            text = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date(place.searchedAt)),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    IconButton(onClick = { openMapsQuery(place.name) }) {
+                                        Icon(Icons.Default.Place, contentDescription = "Buscar de nuevo")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             Card(
                 modifier = Modifier.fillMaxWidth().animatedSlideUp(80)
             ) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("Naturaleza y recreación", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                    Button(
-                        onClick = { openMapsQuery("parques cerca de mi") },
-                        modifier = Modifier.fillMaxWidth().bounceClick(),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                    ) { Text("Buscar parques") }
-                    Button(
-                        onClick = { openMapsQuery("senderos naturales") },
-                        modifier = Modifier.fillMaxWidth().bounceClick()
-                    ) { Text("Senderos y naturaleza") }
+                    PlaceButton(
+                        text = "Buscar parques",
+                        icon = Icons.Default.Park,
+                        onClick = { recordRecentPlace("parques cerca de mi", "park") },
+                        color = Color(0xFF4CAF50)
+                    )
+                    PlaceButton(
+                        text = "Senderos y naturaleza",
+                        icon = Icons.Default.Terrain,
+                        onClick = { recordRecentPlace("senderos naturales", "trail") }
+                    )
                 }
             }
 
@@ -143,15 +210,17 @@ fun PlacesScreen(navController: NavController) {
             ) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("Apoyo en salud mental", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                    Button(
-                        onClick = { openMapsQuery("psicologo salud mental") },
-                        modifier = Modifier.fillMaxWidth().bounceClick(),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
-                    ) { Text("Buscar psicólogos") }
-                    Button(
-                        onClick = { openMapsQuery("centro de salud mental") },
-                        modifier = Modifier.fillMaxWidth().bounceClick()
-                    ) { Text("Centros de apoyo") }
+                    PlaceButton(
+                        text = "Buscar psicólogos",
+                        icon = Icons.Default.Healing,
+                        onClick = { recordRecentPlace("psicologo salud mental", "psychologist") },
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    PlaceButton(
+                        text = "Centros de apoyo",
+                        icon = Icons.Default.Healing,
+                        onClick = { recordRecentPlace("centro de salud mental", "support_center") }
+                    )
                 }
             }
 
@@ -176,5 +245,26 @@ fun PlacesScreen(navController: NavController) {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun PlaceButton(
+    text: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    color: Color = MaterialTheme.colorScheme.primary
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth().bounceClick(),
+        colors = ButtonDefaults.buttonColors(containerColor = color)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.padding(end = 8.dp)
+        )
+        Text(text)
     }
 }

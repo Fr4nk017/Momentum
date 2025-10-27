@@ -7,6 +7,7 @@ import com.momentum.app.data.DatabaseProvider
 import com.momentum.app.model.forms.*
 import kotlinx.coroutines.launch
 import com.momentum.app.data.store.EmotionStateStore
+import com.momentum.app.data.store.ThemePreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -70,6 +71,16 @@ class BienestarViewModel(application: Application) : AndroidViewModel(applicatio
 
     // Simplificar inicialización de usuario
     private val repository by lazy { DatabaseProvider.clientRepository(getApplication()) }
+    private val themePrefs by lazy { ThemePreferences(getApplication()) }
+
+    init {
+        // Load dark mode preference
+        viewModelScope.launch {
+            themePrefs.isDarkMode.collect { isDark ->
+                _estado.update { it.copy(perfil = it.perfil.copy(modoOscuro = isDark)) }
+            }
+        }
+    }
 
     fun inicializarConUsuario(email: String) {
         val nombre = email.substringBefore("@")
@@ -468,6 +479,20 @@ class BienestarViewModel(application: Application) : AndroidViewModel(applicatio
                     notificacionesActivadas = !estadoActual.perfil.notificacionesActivadas
                 )
             )
+        }
+    }
+
+    fun toggleModoOscuro() {
+        val nuevoValor = !_estado.value.perfil.modoOscuro
+        _estado.update { estadoActual ->
+            estadoActual.copy(
+                perfil = estadoActual.perfil.copy(
+                    modoOscuro = nuevoValor
+                )
+            )
+        }
+        viewModelScope.launch {
+            themePrefs.setDarkMode(nuevoValor)
         }
     }
 }

@@ -46,5 +46,6 @@ data class PerfilUsuario(
     val telefono: String = "",
     val recordatoriosCada3h: Boolean = true,
     val notificacionesActivadas: Boolean = true,
-    val numeroEmergencia: String = "131"
+    val numeroEmergencia: String = "131",
+    val modoOscuro: Boolean = false
 )

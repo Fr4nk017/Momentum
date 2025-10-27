@@ -28,7 +28,8 @@ data class BienestarUiState(
         sexo = "",
         estadoCivil = "",
         ocupacion = "",
-        telefono = ""
+        telefono = "",
+        modoOscuro = false
     ),
     val mensajeMotivadorDelDia: String = "Cada día es una nueva oportunidad para crecer",
     val mensajeNuevo: String = "",
