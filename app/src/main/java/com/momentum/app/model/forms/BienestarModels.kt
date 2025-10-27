@@ -39,6 +39,11 @@ data class PerfilUsuario(
     val nombre: String,
     val apellido: String,
     val correo: String,
+    val edad: Int? = null,
+    val sexo: String = "",
+    val estadoCivil: String = "",
+    val ocupacion: String = "",
+    val telefono: String = "",
     val recordatoriosCada3h: Boolean = true,
     val notificacionesActivadas: Boolean = true,
     val numeroEmergencia: String = "131"

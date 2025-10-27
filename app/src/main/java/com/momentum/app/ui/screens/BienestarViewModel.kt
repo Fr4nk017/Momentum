@@ -91,7 +91,12 @@ class BienestarViewModel(application: Application) : AndroidViewModel(applicatio
                                 perfil = estadoActual.perfil.copy(
                                     nombre = nombreDb,
                                     apellido = apellidoDb,
-                                    correo = email
+                                    correo = email,
+                                    edad = entity.age,
+                                    sexo = entity.sex ?: "",
+                                    estadoCivil = entity.maritalStatus ?: "",
+                                    ocupacion = entity.occupation ?: "",
+                                    telefono = entity.phone ?: ""
                                 )
                             )
                         }
@@ -392,7 +397,56 @@ class BienestarViewModel(application: Application) : AndroidViewModel(applicatio
         // Persistir cambios en BD (nombre completo: nombre + apellido)
         val nombreCompleto = listOf(nombre, apellido).filter { it.isNotBlank() }.joinToString(" ")
         viewModelScope.launch {
-            runCatching { repository.upsert(name = nombreCompleto.ifBlank { nombre }, email = correo) }
+            val perfil = _estado.value.perfil
+            runCatching {
+                repository.upsert(
+                    name = nombreCompleto.ifBlank { nombre },
+                    email = correo,
+                    age = perfil.edad,
+                    sex = perfil.sexo.ifBlank { null },
+                    maritalStatus = perfil.estadoCivil.ifBlank { null },
+                    occupation = perfil.ocupacion.ifBlank { null },
+                    phone = perfil.telefono.ifBlank { null }
+                )
+            }
+                .onFailure { /* log si se desea */ }
+        }
+    }
+
+    fun actualizarPerfilCliente(form: ClientProfileForm) {
+        // Actualiza el estado en memoria con los nuevos campos del cliente
+        _estado.update { estadoActual ->
+            estadoActual.copy(
+                perfil = estadoActual.perfil.copy(
+                    nombre = form.nombre.ifBlank { estadoActual.perfil.nombre },
+                    // mantenemos apellido existente; nombre en form se asume nombre(s) sin apellido
+                    correo = form.email.ifBlank { estadoActual.perfil.correo },
+                    edad = form.edad,
+                    sexo = form.sexo,
+                    estadoCivil = form.estadoCivil,
+                    ocupacion = form.ocupacion,
+                    telefono = form.telefono
+                )
+            )
+        }
+
+        // Persistimos al menos nombre completo y correo como antes
+        val nombreCompleto = listOf(_estado.value.perfil.nombre, _estado.value.perfil.apellido)
+            .filter { it.isNotBlank() }
+            .joinToString(" ")
+        viewModelScope.launch {
+            val perfil = _estado.value.perfil
+            runCatching {
+                repository.upsert(
+                    name = nombreCompleto.ifBlank { perfil.nombre },
+                    email = perfil.correo,
+                    age = perfil.edad,
+                    sex = perfil.sexo.ifBlank { null },
+                    maritalStatus = perfil.estadoCivil.ifBlank { null },
+                    occupation = perfil.ocupacion.ifBlank { null },
+                    phone = perfil.telefono.ifBlank { null }
+                )
+            }
                 .onFailure { /* log si se desea */ }
         }
     }

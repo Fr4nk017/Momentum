@@ -19,6 +19,11 @@ import com.momentum.app.navigation.AuthRoutes
 import androidx.compose.ui.res.stringResource
 import com.momentum.app.R
 import com.momentum.app.ui.animations.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import com.momentum.app.model.forms.ClientProfileForm
+import com.momentum.app.model.forms.validate
+import com.momentum.app.model.forms.isValid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +36,23 @@ fun PerfilScreen(
     var nombreTemp by remember { mutableStateOf(estado.perfil.nombre) }
     var apellidoTemp by remember { mutableStateOf(estado.perfil.apellido) }
     var correoTemp by remember { mutableStateOf(estado.perfil.correo) }
+    var edadTemp by remember { mutableStateOf(estado.perfil.edad?.toString() ?: "") }
+    var sexoTemp by remember { mutableStateOf(estado.perfil.sexo) }
+    var estadoCivilTemp by remember { mutableStateOf(estado.perfil.estadoCivil) }
+    var ocupacionTemp by remember { mutableStateOf(estado.perfil.ocupacion) }
+    var telefonoTemp by remember { mutableStateOf(estado.perfil.telefono) }
+    val form by derivedStateOf {
+        ClientProfileForm(
+            nombre = nombreTemp,
+            edad = edadTemp.toIntOrNull(),
+            sexo = sexoTemp,
+            estadoCivil = estadoCivilTemp,
+            ocupacion = ocupacionTemp,
+            email = correoTemp,
+            telefono = telefonoTemp
+        )
+    }
+    val errores = form.validate()
     var mostrarDialogoCerrarSesion by remember { mutableStateOf(false) }
 
     Column(
@@ -88,7 +110,11 @@ fun PerfilScreen(
                         value = nombreTemp,
                         onValueChange = { nombreTemp = it },
                         label = { Text(stringResource(id = R.string.nombre)) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = errores.nombre != null,
+                        supportingText = {
+                            errores.nombre?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                        }
                     )
                     
                     OutlinedTextField(
@@ -102,7 +128,68 @@ fun PerfilScreen(
                         value = correoTemp,
                         onValueChange = { correoTemp = it },
                         label = { Text(stringResource(id = R.string.correo_electronico)) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = errores.email != null,
+                        supportingText = {
+                            errores.email?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                        }
+                    )
+
+                    OutlinedTextField(
+                        value = edadTemp,
+                        onValueChange = { edadTemp = it.filter { ch -> ch.isDigit() }.take(3) },
+                        label = { Text("Edad (opcional)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        isError = errores.edad != null,
+                        supportingText = {
+                            errores.edad?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                        }
+                    )
+
+                    OutlinedTextField(
+                        value = sexoTemp,
+                        onValueChange = { sexoTemp = it },
+                        label = { Text("Sexo (Masculino/Femenino/Otro)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = errores.sexo != null,
+                        supportingText = {
+                            errores.sexo?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                        }
+                    )
+
+                    OutlinedTextField(
+                        value = estadoCivilTemp,
+                        onValueChange = { estadoCivilTemp = it },
+                        label = { Text("Estado civil") },
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = errores.estadoCivil != null,
+                        supportingText = {
+                            errores.estadoCivil?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                        }
+                    )
+
+                    OutlinedTextField(
+                        value = ocupacionTemp,
+                        onValueChange = { ocupacionTemp = it },
+                        label = { Text("Ocupación") },
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = errores.ocupacion != null,
+                        supportingText = {
+                            errores.ocupacion?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                        }
+                    )
+
+                    OutlinedTextField(
+                        value = telefonoTemp,
+                        onValueChange = { telefonoTemp = it.filter { ch -> ch.isDigit() }.take(15) },
+                        label = { Text("Teléfono") },
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                        isError = errores.telefono != null,
+                        supportingText = {
+                            errores.telefono?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                        }
                     )
                     
                     Row(
@@ -115,6 +202,11 @@ fun PerfilScreen(
                                 nombreTemp = estado.perfil.nombre
                                 apellidoTemp = estado.perfil.apellido
                                 correoTemp = estado.perfil.correo
+                                edadTemp = estado.perfil.edad?.toString() ?: ""
+                                sexoTemp = estado.perfil.sexo
+                                estadoCivilTemp = estado.perfil.estadoCivil
+                                ocupacionTemp = estado.perfil.ocupacion
+                                telefonoTemp = estado.perfil.telefono
                             },
                             modifier = Modifier.weight(1f)
                         ) {
@@ -123,13 +215,16 @@ fun PerfilScreen(
                         
                         Button(
                             onClick = { 
+                                // Actualiza nombre/apellido/correo y campos extendidos si es válido
                                 viewModel.actualizarPerfil(nombreTemp, apellidoTemp, correoTemp)
+                                viewModel.actualizarPerfilCliente(form)
                                 editando = false
                             },
                             modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Black
-                            )
+                            ),
+                            enabled = errores.isValid()
                         ) {
                             Text(stringResource(id = R.string.guardar), color = Color.White)
                         }
@@ -146,6 +241,22 @@ fun PerfilScreen(
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+
+                    // Información adicional
+                    val infoAdicional = listOfNotNull(
+                        estado.perfil.edad?.let { "Edad: $it" },
+                        estado.perfil.sexo.takeIf { it.isNotBlank() }?.let { "Sexo: $it" },
+                        estado.perfil.estadoCivil.takeIf { it.isNotBlank() }?.let { "Estado civil: $it" },
+                        estado.perfil.ocupacion.takeIf { it.isNotBlank() }?.let { "Ocupación: $it" },
+                        estado.perfil.telefono.takeIf { it.isNotBlank() }?.let { "Teléfono: $it" }
+                    )
+                    infoAdicional.forEach { dato ->
+                        Text(
+                            text = dato,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                     
                     Button(
                         onClick = { 
@@ -153,6 +264,11 @@ fun PerfilScreen(
                             nombreTemp = estado.perfil.nombre
                             apellidoTemp = estado.perfil.apellido
                             correoTemp = estado.perfil.correo
+                            edadTemp = estado.perfil.edad?.toString() ?: ""
+                            sexoTemp = estado.perfil.sexo
+                            estadoCivilTemp = estado.perfil.estadoCivil
+                            ocupacionTemp = estado.perfil.ocupacion
+                            telefonoTemp = estado.perfil.telefono
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black
@@ -227,6 +343,14 @@ fun PerfilScreen(
                     text = stringResource(id = R.string.numero_emergencia, estado.perfil.numeroEmergencia),
                     style = MaterialTheme.typography.bodyLarge
                 )
+
+                Button(
+                    onClick = { navController.navigate(com.momentum.app.navigation.Routes.Places.name) },
+                    modifier = Modifier.fillMaxWidth().bounceClick(),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text("Explorar lugares cercanos", color = Color.White)
+                }
             }
         }
 

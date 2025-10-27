@@ -8,5 +8,10 @@ data class ClientEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val email: String,
+    val age: Int? = null,
+    val sex: String? = null,
+    val maritalStatus: String? = null,
+    val occupation: String? = null,
+    val phone: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 )

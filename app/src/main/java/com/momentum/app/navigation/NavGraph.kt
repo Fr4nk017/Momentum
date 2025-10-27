@@ -16,7 +16,7 @@ import com.momentum.app.ui.screens.community.CommunityScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.momentum.app.ui.animations.*
 
-enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends }
+enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends, Places }
 
 object AuthRoutes {
     const val LOGIN = "login"
@@ -107,6 +107,16 @@ fun MomentumNavHost() {
             popExitTransition = { slideOutToRight() }
         ) {
             PerfilScreen(navController = nav, viewModel = sharedViewModel)
+        }
+
+        composable(
+            Routes.Places.name,
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) {
+            com.momentum.app.ui.screens.places.PlacesScreen(navController = nav)
         }
         
         // New social features routes

@@ -23,7 +23,12 @@ data class BienestarUiState(
     val perfil: PerfilUsuario = PerfilUsuario(
         nombre = "Nombre",
         apellido = "Apellido", 
-        correo = "correo@dominio.com"
+        correo = "correo@dominio.com",
+        edad = null,
+        sexo = "",
+        estadoCivil = "",
+        ocupacion = "",
+        telefono = ""
     ),
     val mensajeMotivadorDelDia: String = "Cada día es una nueva oportunidad para crecer",
     val mensajeNuevo: String = "",
