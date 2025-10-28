@@ -11,9 +11,10 @@ import androidx.room.RoomDatabase
         CommunityPostEntity::class,
         RecentPlaceEntity::class,
         HikingSessionEntity::class,
-        LocationPointEntity::class
+        LocationPointEntity::class,
+        DiaryEntryEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -24,4 +25,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun recentPlaceDao(): RecentPlaceDao
     abstract fun hikingSessionDao(): HikingSessionDao
     abstract fun locationPointDao(): LocationPointDao
+    abstract fun diaryEntryDao(): DiaryEntryDao
 }

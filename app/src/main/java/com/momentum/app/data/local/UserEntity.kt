@@ -12,5 +12,8 @@ data class UserEntity(
     val avatarUrl: String = "",
     val totalPosts: Int = 0,
     val friendsCount: Int = 0,
+    val currentMood: String = "",
+    val lastDiaryDate: Long = 0,
+    val totalEntries: Int = 0,
     val createdAt: Long = System.currentTimeMillis()
 )
