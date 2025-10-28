@@ -11,18 +11,20 @@ import com.momentum.app.data.repository.RecentPlaceRepository
 
 object DatabaseProvider {
     @Volatile
-    private var db: AppDatabase? = null
+    private var INSTANCE: AppDatabase? = null
 
     private fun getDatabase(context: Context): AppDatabase {
-        return db ?: synchronized(this) {
-            val instance = Room.databaseBuilder(
+        // Double-checked locking pattern
+        return INSTANCE ?: synchronized(this) {
+            // Check again inside synchronized block
+            val instance = INSTANCE ?: Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
                 "momentum.db"
             )
                 .fallbackToDestructiveMigration()
                 .build()
-            db = instance
+                .also { INSTANCE = it }
             instance
         }
     }
