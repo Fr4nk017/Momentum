@@ -15,6 +15,8 @@ import com.momentum.app.ui.screens.friends.SearchFriendsScreen
 import com.momentum.app.ui.screens.community.CommunityScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.momentum.app.ui.animations.*
+import com.momentum.app.viewmodel.DiaryViewModel
+import com.momentum.app.viewmodel.ProgressViewModel
 
 enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends, Places, Hiking, HikingHistory, OutdoorActivities }
 
@@ -29,6 +31,8 @@ object AuthRoutes {
 fun MomentumNavHost() {
     val nav = rememberNavController()
     val sharedViewModel = viewModel<BienestarViewModel>()
+    val diaryViewModel = viewModel<DiaryViewModel>()
+    val progressViewModel = viewModel<ProgressViewModel>()
     
     NavHost(navController = nav, startDestination = AuthRoutes.LOGIN) {
         // Authentication routes
@@ -79,7 +83,11 @@ fun MomentumNavHost() {
             popEnterTransition = { slideInFromLeft() },
             popExitTransition = { slideOutToRight() }
         ) { 
-            DiarioScreen(navController = nav, viewModel = sharedViewModel) 
+            DiarioScreen(
+                navController = nav,
+                viewModel = sharedViewModel,
+                diaryViewModel = diaryViewModel
+            )
         }
         composable(
             Routes.Chat.name,
@@ -97,7 +105,11 @@ fun MomentumNavHost() {
             popEnterTransition = { slideInFromLeft() },
             popExitTransition = { slideOutToRight() }
         ) {
-            ProgresoScreen(navController = nav, viewModel = sharedViewModel)
+            ProgresoScreen(
+                navController = nav,
+                viewModel = sharedViewModel,
+                progressViewModel = progressViewModel
+            )
         }
         composable(
             Routes.Perfil.name,

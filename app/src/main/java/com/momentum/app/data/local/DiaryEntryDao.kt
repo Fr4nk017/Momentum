@@ -28,6 +28,43 @@ interface DiaryEntryDao {
 
     @Query("SELECT moodEmoji, COUNT(*) as count FROM diary_entries WHERE userId = :userId GROUP BY moodEmoji ORDER BY count DESC")
     suspend fun getMoodStatistics(userId: String): List<MoodStatistic>
+    
+    // Consultas para Analytics Avanzados
+    
+    @Query("""
+        SELECT COUNT(*) FROM diary_entries 
+        WHERE userId = :userId 
+        AND createdAt >= :startOfMonth 
+        AND createdAt <= :endOfMonth
+    """)
+    suspend fun getEntriesCountInMonth(userId: String, startOfMonth: Long, endOfMonth: Long): Int
+    
+    @Query("""
+        SELECT moodEmoji, COUNT(*) as count 
+        FROM diary_entries 
+        WHERE userId = :userId 
+        AND createdAt >= :startOfMonth 
+        AND createdAt <= :endOfMonth
+        GROUP BY moodEmoji 
+        ORDER BY count DESC
+    """)
+    suspend fun getMoodStatisticsForMonth(userId: String, startOfMonth: Long, endOfMonth: Long): List<MoodStatistic>
+    
+    @Query("""
+        SELECT * FROM diary_entries 
+        WHERE userId = :userId 
+        AND createdAt >= :startDate 
+        AND createdAt <= :endDate
+        ORDER BY createdAt ASC
+    """)
+    suspend fun getEntriesInDateRange(userId: String, startDate: Long, endDate: Long): List<DiaryEntryEntity>
+    
+    @Query("""
+        SELECT * FROM diary_entries 
+        WHERE userId = :userId 
+        ORDER BY createdAt DESC
+    """)
+    suspend fun getAllEntriesList(userId: String): List<DiaryEntryEntity>
 }
 
 data class MoodStatistic(
