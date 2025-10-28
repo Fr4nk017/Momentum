@@ -58,10 +58,10 @@ fun BottomNavigationBar(
             )
             
             BottomNavItem(
-                icon = Icons.Default.People,
-                label = "Comunidad",
-                isSelected = currentRoute == Routes.Community.name,
-                onClick = { navController.navigate(Routes.Community.name) }
+                icon = Icons.Default.Park,
+                label = "Aire Libre",
+                isSelected = currentRoute == Routes.OutdoorActivities.name,
+                onClick = { navController.navigate(Routes.OutdoorActivities.name) }
             )
             
             BottomNavItem(

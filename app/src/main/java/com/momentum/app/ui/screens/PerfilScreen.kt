@@ -362,32 +362,6 @@ fun PerfilScreen(
                         onCheckedChange = { viewModel.toggleModoOscuro() }
                     )
                 }
-
-                Button(
-                    onClick = { navController.navigate(Routes.Places.name) },
-                    modifier = Modifier.fillMaxWidth().bounceClick(),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Place,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text("Explorar lugares cercanos", color = Color.White)
-                }
-                
-                Button(
-                    onClick = { navController.navigate(Routes.HikingHistory.name) },
-                    modifier = Modifier.fillMaxWidth().bounceClick(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800))
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Terrain,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text("Historial de senderismo", color = Color.White)
-                }
             }
         }
 
