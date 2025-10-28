@@ -49,6 +49,12 @@ fun OutdoorActivitiesScreen(
                     titleContentColor = Color.White
                 )
             )
+        },
+        bottomBar = {
+            BottomNavigationBar(
+                currentRoute = Routes.OutdoorActivities.name,
+                navController = navController
+            )
         }
     ) { padding ->
         Column(

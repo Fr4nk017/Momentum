@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.material3.*
@@ -217,18 +218,26 @@ fun PerfilScreen(
                         
                         Button(
                             onClick = { 
-                                // Actualiza nombre/apellido/correo y campos extendidos si es válido
-                                viewModel.actualizarPerfil(nombreTemp, apellidoTemp, correoTemp)
-                                viewModel.actualizarPerfilCliente(form)
-                                editando = false
+                                if (errores.isValid()) {
+                                    // Actualiza nombre/apellido/correo y campos extendidos
+                                    viewModel.actualizarPerfil(nombreTemp, apellidoTemp, correoTemp)
+                                    viewModel.actualizarPerfilCliente(form)
+                                    editando = false
+                                }
                             },
                             modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Black
+                                containerColor = MaterialTheme.colorScheme.primary
                             ),
                             enabled = errores.isValid()
                         ) {
-                            Text(stringResource(id = R.string.guardar), color = Color.White)
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(stringResource(id = R.string.guardar))
                         }
                     }
                 } else {

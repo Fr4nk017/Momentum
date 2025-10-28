@@ -20,14 +20,25 @@ import com.momentum.app.navigation.Routes
 import androidx.compose.ui.res.stringResource
 import com.momentum.app.R
 import com.momentum.app.ui.animations.*
+import com.momentum.app.viewmodel.HomeViewModel
+import com.momentum.app.data.suggestions.ActionType
+import androidx.compose.material3.ModalBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PuenteEmocionalScreen(
     navController: NavController,
-    viewModel: BienestarViewModel
+    viewModel: BienestarViewModel,
+    homeViewModel: HomeViewModel
 ) {
     val estado by viewModel.estado.collectAsState()
+    val homeState by homeViewModel.uiState.collectAsState()
+
+    LaunchedEffect(estado.perfil.correo) {
+        if (estado.perfil.correo.isNotEmpty()) homeViewModel.initialize(estado.perfil.correo)
+    }
+
+    var showIntensitySheet by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -46,22 +57,24 @@ fun PuenteEmocionalScreen(
                 .animatedScale(delay = 0)
             ) {
                 Text(
-                    text = "¡Hola, ${estado.perfil.nombre}!",
+                    text = "¡Hola, ${estado.perfil.nombre}! 🔥 Día ${homeState.dayStreak}",
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = estado.mensajeMotivadorDelDia,
+                    text = "Tu equilibrio mental es prioridad",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp)
                 )
-                // Info adicional del usuario
+                if (homeState.dayStreak >= 7) {
+                    AssistChip(onClick = {}, label = { Text("Logro: Semana completa desbloqueado") })
+                }
                 Text(
-                    text = estado.perfil.correo,
+                    text = homeState.joke,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier.padding(top = 6.dp)
                 )
             }
             
@@ -84,51 +97,7 @@ fun PuenteEmocionalScreen(
             }
         }
 
-        // Mensaje motivacional del día
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .animatedSlideUp(delay = 100)
-                .animatedFadeIn(delay = 100),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF4CAF50).copy(alpha = 0.1f)
-            )
-        ) {
-            Row(
-                modifier = Modifier.padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = "💚",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Momento de reflexión",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF2E7D32)
-                    )
-                    Text(
-                        text = estado.mensajeMotivadorDelDia,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFF2E7D32)
-                    )
-                }
-                IconButton(
-                    onClick = { viewModel.obtenerNuevoMensajeMotivador() }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = null,
-                        tint = Color(0xFF2E7D32)
-                    )
-                }
-            }
-        }
-
-        // Pregunta emocional
+        // Check-in emocional interactivo
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -139,7 +108,7 @@ fun PuenteEmocionalScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = stringResource(id = R.string.como_te_sientes),
+                    text = "Registra tu estado actual",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Medium
                 )
@@ -149,25 +118,21 @@ fun PuenteEmocionalScreen(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.height(120.dp)
+                    modifier = Modifier.height(160.dp)
                 ) {
-                    items(estado.estadosEmocionales) { estadoEmocional ->
-                        val idx = estado.estadosEmocionales.indexOf(estadoEmocional)
-                        FilterChip(
-                            onClick = { 
-                                viewModel.seleccionarEstadoEmocional(estadoEmocional.nombre)
+                    items(homeViewModel.emotionGrid) { emoji ->
+                        val idx = homeViewModel.emotionGrid.indexOf(emoji)
+                        ElevatedButton(
+                            onClick = {
+                                homeViewModel.selectMood(emoji)
+                                showIntensitySheet = true
                             },
-                            label = { 
-                                Text(
-                                    text = estadoEmocional.nombre,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            },
-                            selected = estadoEmocional.esSeleccionado,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .animatedFadeIn(delay = getStaggeredDelay(idx, baseDelay = 60))
-                        )
+                                .animatedFadeIn(delay = getStaggeredDelay(idx, baseDelay = 50))
+                        ) {
+                            Text(emoji, style = MaterialTheme.typography.headlineSmall)
+                        }
                     }
                 }
             }
@@ -183,47 +148,74 @@ fun PuenteEmocionalScreen(
                 modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = stringResource(id = R.string.sugerencia_hoy),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Medium
+                val suggestion = homeState.suggestion ?: com.momentum.app.data.suggestions.Suggestion(
+                    badge = "💡 Recomendación personalizada",
+                    title = "Respiración 4-4-6 - 5 repeticiones",
+                    description = "Perfecto para tu estado de ánimo actual",
+                    actionLabel = "Comenzar ahora",
+                    actionType = ActionType.BREATHING_446
                 )
-                
-                Text(
-                    text = stringResource(id = R.string.respiracion_446) + "\n" + stringResource(id = R.string.respiracion_descripcion),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                AssistChip(onClick = {}, label = { Text(suggestion.badge) })
+                Text(suggestion.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Medium)
+                Text(suggestion.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Icono del árbol (placeholder)
-                    Surface(
-                        modifier = Modifier.size(48.dp),
-                        shape = RoundedCornerShape(8.dp),
-                        color = Color(0xFF4CAF50)
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Text("🌳", style = MaterialTheme.typography.headlineMedium)
-                        }
-                    }
-                    
                     Spacer(modifier = Modifier.weight(1f))
-                    
                     Button(
-                        onClick = { 
-                            viewModel.iniciarEjercicioRespiracion()
-                            navController.navigate(Routes.Chat.name)
+                        onClick = {
+                            when (suggestion.actionType) {
+                                ActionType.BREATHING_446 -> {
+                                    viewModel.iniciarEjercicioRespiracion()
+                                    navController.navigate(Routes.Chat.name)
+                                }
+                                ActionType.OPEN_DIARY -> navController.navigate(Routes.Diario.name)
+                                ActionType.OPEN_CHAT -> navController.navigate(Routes.Chat.name)
+                                ActionType.MINDFULNESS -> navController.navigate(Routes.Chat.name)
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black
                         ),
                         modifier = Modifier.bounceClick()
                     ) {
-                        Text(stringResource(id = R.string.comenzar), color = Color.White)
+                        Text(suggestion.actionLabel, color = Color.White)
                     }
+                }
+            }
+        }
+
+        // Accesos rápidos en grid
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animatedSlideUp(delay = 320)
+        ) {
+            Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text("Accesos rápidos", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Medium)
+                LazyVerticalGrid(columns = GridCells.Fixed(3),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.height(160.dp)) {
+                    items(listOf("📝" to "Diario", "💬" to "Chat", "📊" to "Progreso", "🌬" to "Ejercicios", "🎯" to "Metas", "🔔" to "Recordatorios")) { (icon, label) ->
+                        ElevatedButton(onClick = {
+                            when (label) {
+                                "Diario" -> navController.navigate(Routes.Diario.name)
+                                "Chat" -> navController.navigate(Routes.Chat.name)
+                                "Progreso" -> navController.navigate(Routes.Progreso.name)
+                                "Ejercicios" -> navController.navigate(Routes.Chat.name)
+                                "Metas" -> navController.navigate(Routes.PuenteEmocional.name) // placeholder
+                                "Recordatorios" -> navController.navigate(Routes.Perfil.name)
+                            }
+                        }, modifier = Modifier.fillMaxWidth()) {
+                            Text("$icon  $label")
+                        }
+                    }
+                }
+                if (!homeState.hasEntryToday) {
+                    AssistChip(onClick = { navController.navigate(Routes.Diario.name) }, label = { Text("📝 Tienes 1 pendiente en Diario") })
                 }
             }
         }
@@ -264,5 +256,25 @@ fun PuenteEmocionalScreen(
             currentRoute = Routes.PuenteEmocional.name,
             navController = navController
         )
+    }
+
+    // BottomSheet de intensidad
+    if (showIntensitySheet && homeState.selectedMood != null) {
+        ModalBottomSheet(onDismissRequest = { showIntensitySheet = false }) {
+            Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text("${homeState.selectedMood} - ¿Qué tan intenso?", style = MaterialTheme.typography.titleLarge)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    listOf(1 to "Leve", 2 to "Moderado", 3 to "Intenso").forEach { (level, label) ->
+                        OutlinedButton(onClick = {
+                            homeViewModel.selectIntensity(level)
+                            showIntensitySheet = false
+                        }, modifier = Modifier.weight(1f)) { Text(label) }
+                    }
+                }
+                Button(onClick = { homeViewModel.saveQuickCheckIn(); showIntensitySheet = false }, enabled = homeState.selectedIntensity > 0) {
+                    Text("Guardar check-in")
+                }
+            }
+        }
     }
 }
