@@ -292,6 +292,42 @@ fun PuenteEmocionalScreen(
                 }
             }
         }
+        
+        // CTA Tracking de Senderismo
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animatedSlideUp(delay = 500),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFFFF9800).copy(alpha = 0.15f)
+            )
+        ) {
+            Row(
+                modifier = Modifier.padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Rastrea tu actividad física",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "Monitorea distancia, pasos y calorías",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Button(
+                    onClick = { navController.navigate(Routes.Hiking.name) },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800)),
+                    modifier = Modifier.bounceClick()
+                ) {
+                    Text("Comenzar", color = Color.White)
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 

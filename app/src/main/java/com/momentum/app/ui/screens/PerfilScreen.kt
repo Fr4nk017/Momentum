@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -373,6 +374,19 @@ fun PerfilScreen(
                         modifier = Modifier.padding(end = 8.dp)
                     )
                     Text("Explorar lugares cercanos", color = Color.White)
+                }
+                
+                Button(
+                    onClick = { navController.navigate(Routes.HikingHistory.name) },
+                    modifier = Modifier.fillMaxWidth().bounceClick(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Terrain,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text("Historial de senderismo", color = Color.White)
                 }
             }
         }

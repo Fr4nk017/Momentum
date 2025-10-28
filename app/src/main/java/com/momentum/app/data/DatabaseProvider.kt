@@ -13,7 +13,7 @@ object DatabaseProvider {
     @Volatile
     private var INSTANCE: AppDatabase? = null
 
-    private fun getDatabase(context: Context): AppDatabase {
+    fun getDatabase(context: Context): AppDatabase {
         // Double-checked locking pattern
         return INSTANCE ?: synchronized(this) {
             // Check again inside synchronized block

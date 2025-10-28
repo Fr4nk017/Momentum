@@ -16,7 +16,7 @@ import com.momentum.app.ui.screens.community.CommunityScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.momentum.app.ui.animations.*
 
-enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends, Places }
+enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends, Places, Hiking, HikingHistory }
 
 object AuthRoutes {
     const val LOGIN = "login"
@@ -164,6 +164,28 @@ fun MomentumNavHost() {
             popExitTransition = { slideOutToRight() }
         ) {
             SearchFriendsScreen(navController = nav)
+        }
+        composable(
+            Routes.Hiking.name,
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) {
+            com.momentum.app.ui.screens.HikingScreen(
+                onNavigateBack = { nav.popBackStack() }
+            )
+        }
+        composable(
+            Routes.HikingHistory.name,
+            enterTransition = { slideInFromRight() },
+            exitTransition = { slideOutToLeft() },
+            popEnterTransition = { slideInFromLeft() },
+            popExitTransition = { slideOutToRight() }
+        ) {
+            com.momentum.app.ui.screens.HikingHistoryScreen(
+                onNavigateBack = { nav.popBackStack() }
+            )
         }
     }
 }
