@@ -41,6 +41,19 @@ android {
     packaging {
         resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
     }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
+    defaultConfig {
+        // tus otras cosas (applicationId, versionCode, etc.)
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
 }
 
 // Kotlin toolchain a 21
@@ -86,4 +99,37 @@ dependencies {
 
     // Location (opcional)
     implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    // Retrofit + Moshi
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
+    // Moshi + soporte para data classes de Kotlin
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+
+// OkHttp logging (para ver las peticiones en Logcat, opcional pero útil)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+// Coroutines para ViewModel / flows (si no las tienes ya)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+
+    // JUnit5
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+// Kotest
+    testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
+    testImplementation("io.kotest:kotest-assertions-core:5.9.1")
+
+// MockK
+    testImplementation("io.mockk:mockk:1.13.11")
+
+// Coroutines test
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+
+// Compose UI Test
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
 }
