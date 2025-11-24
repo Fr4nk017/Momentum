@@ -86,4 +86,20 @@ dependencies {
 
     // Location (opcional)
     implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    // Retrofit + Moshi
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
+    // Moshi + soporte para data classes de Kotlin
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+
+// OkHttp logging (para ver las peticiones en Logcat, opcional pero útil)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+// Coroutines para ViewModel / flows (si no las tienes ya)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+
+
 }
