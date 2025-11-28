@@ -31,6 +31,8 @@ import com.momentum.app.data.local.DiaryEntryEntity
 import com.momentum.app.navigation.Routes
 import com.momentum.app.ui.animations.bounceClick
 import com.momentum.app.viewmodel.DiaryViewModel
+import com.momentum.app.ui.viewmodel.RemoteDiaryViewModel
+import com.momentum.app.ui.viewmodel.DiaryUiState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -40,14 +42,17 @@ import java.util.Locale
 fun DiarioScreen(
     navController: NavController,
     viewModel: BienestarViewModel,
-    diaryViewModel: DiaryViewModel = viewModel()
+    diaryViewModel: DiaryViewModel = viewModel(),
+    remoteDiaryViewModel: RemoteDiaryViewModel? = null
 ) {
     val estado by viewModel.estado.collectAsState()
     val diaryState by diaryViewModel.uiState.collectAsState()
+    val remoteState by (remoteDiaryViewModel?.uiState?.collectAsState() ?: remember { mutableStateOf(DiaryUiState.Idle) })
     
     LaunchedEffect(estado.perfil.correo) {
         if (estado.perfil.correo.isNotEmpty()) {
             diaryViewModel.initializeUser(estado.perfil.correo)
+            remoteDiaryViewModel?.cargarHistorial()
         }
     }
     
@@ -87,7 +92,18 @@ fun DiarioScreen(
             )
 
             Button(
-                onClick = { diaryViewModel.saveEntry() },
+                onClick = { 
+                    diaryViewModel.saveEntry()
+                    // También enviar al backend si está disponible
+                    remoteDiaryViewModel?.let { remote ->
+                        if (diaryState.selectedMood != null && diaryState.currentContent.isNotBlank()) {
+                            remote.enviarEntrada(
+                                title = "Entrada ${diaryState.selectedMood}",
+                                content = diaryState.currentContent
+                            )
+                        }
+                    }
+                },
                 enabled = !diaryState.isLoading,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
@@ -151,6 +167,66 @@ fun DiarioScreen(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                         )
                     }
+                }
+            }
+
+            // Mostrar entradas del backend si está disponible
+            remoteDiaryViewModel?.let {
+                when (val remote = remoteState) {
+                    is DiaryUiState.Success -> {
+                        if (remote.entries.isNotEmpty()) {
+                            Text(
+                                "Entradas en el servidor (${remote.entries.size})",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            
+                            LazyColumn(
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.heightIn(max = 300.dp)
+                            ) {
+                                items(remote.entries) { entry ->
+                                    Card(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                        )
+                                    ) {
+                                        Column(modifier = Modifier.padding(12.dp)) {
+                                            Text(
+                                                text = entry.title,
+                                                style = MaterialTheme.typography.titleMedium,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Text(
+                                                text = entry.content,
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Text(
+                                                text = "📅 ${entry.date}",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    is DiaryUiState.Error -> {
+                        Text(
+                            "Error al cargar del servidor: ${remote.message}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                    DiaryUiState.Loading -> {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    }
+                    else -> {}
                 }
             }
 

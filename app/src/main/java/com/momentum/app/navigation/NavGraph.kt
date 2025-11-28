@@ -125,7 +125,8 @@ fun MomentumNavHost() {
             DiarioScreen(
                 navController = nav,
                 viewModel = sharedViewModel,
-                diaryViewModel = diaryViewModel
+                diaryViewModel = diaryViewModel,
+                remoteDiaryViewModel = remoteDiaryViewModel
             )
         }
         composable(
