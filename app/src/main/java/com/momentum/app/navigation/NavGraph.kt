@@ -19,8 +19,15 @@ import com.momentum.app.viewmodel.DiaryViewModel
 import com.momentum.app.viewmodel.ProgressViewModel
 import com.momentum.app.viewmodel.ChatViewModel
 import com.momentum.app.viewmodel.HomeViewModel
+import androidx.compose.runtime.remember
+import com.momentum.app.data.remote.moods.BackendRetrofitInstance
+import com.momentum.app.data.repository.MoodRepository
+import com.momentum.app.ui.screens.moods.RemoteMoodsScreen
+import com.momentum.app.ui.viewmodel.MoodViewModel
+import com.momentum.app.ui.viewmodel.MoodViewModelFactory
 
-enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends, Places, Hiking, HikingHistory, OutdoorActivities }
+
+enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends, Places, Hiking, HikingHistory, OutdoorActivities,RemoteMoods }
 
 object AuthRoutes {
     const val LOGIN = "login"
@@ -37,7 +44,16 @@ fun MomentumNavHost() {
     val progressViewModel = viewModel<ProgressViewModel>()
      val chatViewModel = viewModel<ChatViewModel>()
     val homeViewModel = viewModel<HomeViewModel>()
-    
+    // --- Backend Spring Boot + MongoDB (Moods) ---
+    val moodRepository = remember { MoodRepository(BackendRetrofitInstance.api) }
+
+    // por ahora un userId fijo, luego lo sacamos del login o DataStore
+    val userId = "gustavo@example.com"
+
+    val moodViewModel: MoodViewModel = viewModel(
+        factory = MoodViewModelFactory(moodRepository, userId)
+    )
+
     NavHost(navController = nav, startDestination = AuthRoutes.LOGIN) {
         // Authentication routes
         composable(AuthRoutes.LOGIN) {
@@ -214,7 +230,15 @@ fun MomentumNavHost() {
             popEnterTransition = { slideInFromLeft() },
             popExitTransition = { slideOutToRight() }
         ) {
+
             com.momentum.app.ui.screens.OutdoorActivitiesScreen(navController = nav)
         }
+        composable(Routes.RemoteMoods.name) {
+            RemoteMoodsScreen(
+                viewModel = moodViewModel   // 👈 usas el VM que creaste arriba
+            )
+        }
     }
+
+
 }

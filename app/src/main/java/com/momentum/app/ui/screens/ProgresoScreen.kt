@@ -135,9 +135,22 @@ fun ProgresoScreen(
                 item {
                     Spacer(modifier = Modifier.height(80.dp))
                 }
+                item {
+                    Button(
+                        onClick = {
+                            navController.navigate(Routes.RemoteMoods.name)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Text("Ver estados emocionales (Backend)")
+                    }
+                }
+
             }
         }
-        
+
         // Bottom Navigation
         Box(
             modifier = Modifier
