@@ -22,13 +22,17 @@ import com.momentum.app.viewmodel.HomeViewModel
 import androidx.compose.runtime.remember
 import com.momentum.app.data.remote.moods.BackendRetrofitInstance
 import com.momentum.app.data.repository.MoodRepository
+import com.momentum.app.data.repository.RemoteDiaryRepository
 import com.momentum.app.ui.screens.moods.RemoteMoodsScreen
+import com.momentum.app.ui.screens.diary.RemoteDiaryScreen
 import com.momentum.app.ui.viewmodel.MoodViewModel
 import com.momentum.app.ui.viewmodel.MoodViewModelFactory
+import com.momentum.app.ui.viewmodel.RemoteDiaryViewModel
+import com.momentum.app.ui.viewmodel.RemoteDiaryViewModelFactory
 
 
 
-enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends, Places, Hiking, HikingHistory, OutdoorActivities,RemoteMoods }
+enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends, Places, Hiking, HikingHistory, OutdoorActivities, RemoteMoods, RemoteDiary }
 
 object AuthRoutes {
     const val LOGIN = "login"
@@ -47,6 +51,9 @@ fun MomentumNavHost() {
     val homeViewModel = viewModel<HomeViewModel>()
     // --- Backend Spring Boot + MongoDB (Moods) ---
     val moodRepository = remember { MoodRepository(BackendRetrofitInstance.api) }
+    
+    // --- Backend Spring Boot + MongoDB (Diary) ---
+    val diaryRepository = remember { RemoteDiaryRepository(BackendRetrofitInstance.api) }
 
     // 👉 ahora usamos el usuario real desde BienestarViewModel
     val userId = sharedViewModel.usuario.value ?: ""
@@ -57,6 +64,12 @@ fun MomentumNavHost() {
     val moodViewModel: MoodViewModel = viewModel(
         key = "MoodVM_$userId",
         factory = MoodViewModelFactory(moodRepository, userId)
+    )
+    
+    // Recreate RemoteDiaryViewModel whenever the logged-in user changes.
+    val remoteDiaryViewModel: RemoteDiaryViewModel = viewModel(
+        key = "DiaryVM_$userId",
+        factory = RemoteDiaryViewModelFactory(diaryRepository, userId)
     )
 
 
@@ -242,6 +255,11 @@ fun MomentumNavHost() {
         composable(Routes.RemoteMoods.name) {
             RemoteMoodsScreen(
                 viewModel = moodViewModel   // 👈 usas el VM que creaste arriba
+            )
+        }
+        composable(Routes.RemoteDiary.name) {
+            RemoteDiaryScreen(
+                viewModel = remoteDiaryViewModel
             )
         }
     }
