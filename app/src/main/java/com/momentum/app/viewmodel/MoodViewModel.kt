@@ -17,7 +17,7 @@ sealed class MoodUiState {
 
 class MoodViewModel(
     private val repository: MoodRepository,
-    private val userId: String // podrías sacarlo de DataStore o del login
+    val userId: String // podrías sacarlo de DataStore o del login
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<MoodUiState>(MoodUiState.Idle)

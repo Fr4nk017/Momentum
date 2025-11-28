@@ -37,6 +37,10 @@ fun RemoteMoodsScreen(
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
+            Text(
+                text = "UserId actual: ${viewModel.userId}",
+                style = MaterialTheme.typography.bodySmall
+            )
 
             OutlinedTextField(
                 value = emotion,

@@ -33,11 +33,19 @@ import com.momentum.app.ui.animations.*
 import com.momentum.app.viewmodel.ProgressViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgresoScreen(
     navController: NavController,
+
     viewModel: BienestarViewModel,
     progressViewModel: ProgressViewModel
 ) {
@@ -130,7 +138,27 @@ fun ProgresoScreen(
                         achievements = stats.achievements
                     )
                 }
-                
+                // ... tus otros item { } de la LazyColumn ...
+
+                item {
+                    // Espacio antes del botón (para separarlo de las tarjetas)
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                item {
+                    Button(
+                        onClick = {
+                            // 👉 Navegar a la pantalla que habla con el backend
+                            navController.navigate(Routes.RemoteMoods.name)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Text(text = "Ver estados emocionales (Backend)")
+                    }
+                }
+
                 // Espacio para bottom navigation
                 item {
                     Spacer(modifier = Modifier.height(80.dp))
