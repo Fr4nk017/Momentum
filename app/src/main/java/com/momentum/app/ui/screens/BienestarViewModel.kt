@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import java.text.SimpleDateFormat
 import java.util.*
-
+import androidx.compose.runtime.mutableStateOf
 /**
  * ViewModel principal para la gestión del estado de bienestar emocional
  * 
@@ -25,6 +25,9 @@ import java.util.*
  * @since 2025-10-05
  */
 class BienestarViewModel(application: Application) : AndroidViewModel(application) {
+
+    var usuario = mutableStateOf<String?>(null)
+        private set
 
     private val _estado = MutableStateFlow(BienestarUiState())
     val estado: StateFlow<BienestarUiState> = _estado
@@ -83,6 +86,7 @@ class BienestarViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun inicializarConUsuario(email: String) {
+        usuario.value = email
         val nombre = email.substringBefore("@")
         _estado.update { it.copy(
             perfil = it.perfil.copy(nombre = nombre, correo = email),
@@ -97,17 +101,14 @@ class BienestarViewModel(application: Application) : AndroidViewModel(applicatio
                         val partes = entity.name.split(" ")
                         val nombreDb = partes.firstOrNull() ?: entity.name
                         val apellidoDb = partes.drop(1).joinToString(" ")
-                        _estado.update { estadoActual ->
+
+                        val estadoActual = _estado.value
+                        _estado.update {
                             estadoActual.copy(
                                 perfil = estadoActual.perfil.copy(
                                     nombre = nombreDb,
                                     apellido = apellidoDb,
-                                    correo = email,
-                                    edad = entity.age,
-                                    sexo = entity.sex ?: "",
-                                    estadoCivil = entity.maritalStatus ?: "",
-                                    ocupacion = entity.occupation ?: "",
-                                    telefono = entity.phone ?: ""
+                                    correo = entity.email
                                 )
                             )
                         }

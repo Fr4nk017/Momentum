@@ -19,8 +19,16 @@ import com.momentum.app.viewmodel.DiaryViewModel
 import com.momentum.app.viewmodel.ProgressViewModel
 import com.momentum.app.viewmodel.ChatViewModel
 import com.momentum.app.viewmodel.HomeViewModel
+import androidx.compose.runtime.remember
+import com.momentum.app.data.remote.moods.BackendRetrofitInstance
+import com.momentum.app.data.repository.MoodRepository
+import com.momentum.app.ui.screens.moods.RemoteMoodsScreen
+import com.momentum.app.ui.viewmodel.MoodViewModel
+import com.momentum.app.ui.viewmodel.MoodViewModelFactory
 
-enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends, Places, Hiking, HikingHistory, OutdoorActivities }
+
+
+enum class Routes { PuenteEmocional, Diario, Chat, Progreso, Perfil, UserProfile, Community, Friends, Places, Hiking, HikingHistory, OutdoorActivities,RemoteMoods }
 
 object AuthRoutes {
     const val LOGIN = "login"
@@ -35,14 +43,24 @@ fun MomentumNavHost() {
     val sharedViewModel = viewModel<BienestarViewModel>()
     val diaryViewModel = viewModel<DiaryViewModel>()
     val progressViewModel = viewModel<ProgressViewModel>()
-     val chatViewModel = viewModel<ChatViewModel>()
+    val chatViewModel = viewModel<ChatViewModel>()
     val homeViewModel = viewModel<HomeViewModel>()
-    
+    // --- Backend Spring Boot + MongoDB (Moods) ---
+    val moodRepository = remember { MoodRepository(BackendRetrofitInstance.api) }
+
+    // 👉 ahora usamos el usuario real desde BienestarViewModel
+    val userId = sharedViewModel.usuario.value ?: ""
+
+    val moodViewModel: MoodViewModel = viewModel(
+        factory = MoodViewModelFactory(moodRepository, userId)
+    )
+
+
     NavHost(navController = nav, startDestination = AuthRoutes.LOGIN) {
         // Authentication routes
         composable(AuthRoutes.LOGIN) {
             com.momentum.app.ui.screens.login.LoginScreen(
-                onSuccess = { email -> 
+                onSuccess = { email ->
                     sharedViewModel.inicializarConUsuario(email)
                     nav.navigate(Routes.PuenteEmocional.name) {
                         popUpTo(AuthRoutes.LOGIN) { inclusive = true }
@@ -54,8 +72,8 @@ fun MomentumNavHost() {
         }
         composable(AuthRoutes.REGISTER) {
             com.momentum.app.ui.screens.register.RegisterScreen(
-                onSuccess = { email, nombre, _ -> 
-                    sharedViewModel.inicializarConRegistro(email, nombre)
+                onSuccess = { email, nombre, _ ->
+                    sharedViewModel.inicializarConUsuario(email)
                     nav.navigate(Routes.PuenteEmocional.name) {
                         popUpTo(AuthRoutes.REGISTER) { inclusive = true }
                     }
@@ -116,7 +134,7 @@ fun MomentumNavHost() {
             ProgresoScreen(
                 navController = nav,
                 viewModel = sharedViewModel,
-                progressViewModel = progressViewModel
+                progressViewModel = progressViewModel   // ⬅️ AHORA SÍ
             )
         }
         composable(
@@ -214,7 +232,15 @@ fun MomentumNavHost() {
             popEnterTransition = { slideInFromLeft() },
             popExitTransition = { slideOutToRight() }
         ) {
+
             com.momentum.app.ui.screens.OutdoorActivitiesScreen(navController = nav)
         }
+        composable(Routes.RemoteMoods.name) {
+            RemoteMoodsScreen(
+                viewModel = moodViewModel   // 👈 usas el VM que creaste arriba
+            )
+        }
     }
+
+
 }
