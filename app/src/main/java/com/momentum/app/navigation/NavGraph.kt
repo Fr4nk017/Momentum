@@ -51,7 +51,11 @@ fun MomentumNavHost() {
     // 👉 ahora usamos el usuario real desde BienestarViewModel
     val userId = sharedViewModel.usuario.value ?: ""
 
+    // Recreate MoodViewModel whenever the logged-in user changes.
+    // Using the userId in the viewModel key forces Compose to recreate
+    // the ViewModel with the correct factory when sharedViewModel.usuario updates.
     val moodViewModel: MoodViewModel = viewModel(
+        key = "MoodVM_$userId",
         factory = MoodViewModelFactory(moodRepository, userId)
     )
 
