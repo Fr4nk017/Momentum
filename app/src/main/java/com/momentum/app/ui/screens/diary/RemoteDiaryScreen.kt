@@ -152,7 +152,7 @@ fun RemoteDiaryScreen(
                                                 }
                                             }
                                         ) {
-                                            Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+                                            Icon(Icons.Default.Delete, contentDescription = "eliminar")
                                         }
                                     }
                                 }
