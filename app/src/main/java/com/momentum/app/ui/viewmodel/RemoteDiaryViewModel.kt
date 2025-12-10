@@ -48,4 +48,32 @@ class RemoteDiaryViewModel(
             }
         }
     }
+
+    fun actualizarEntrada(id: String, title: String, content: String) {
+        viewModelScope.launch {
+            try {
+                _uiState.value = DiaryUiState.Loading
+                repository.actualizarEntrada(id, userId, title, content)
+                // luego recargamos el historial
+                val entries = repository.obtenerEntradas(userId)
+                _uiState.value = DiaryUiState.Success(entries)
+            } catch (e: Exception) {
+                _uiState.value = DiaryUiState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
+
+    fun eliminarEntrada(id: String) {
+        viewModelScope.launch {
+            try {
+                _uiState.value = DiaryUiState.Loading
+                repository.eliminarEntrada(id)
+                // luego recargamos el historial
+                val entries = repository.obtenerEntradas(userId)
+                _uiState.value = DiaryUiState.Success(entries)
+            } catch (e: Exception) {
+                _uiState.value = DiaryUiState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
 }

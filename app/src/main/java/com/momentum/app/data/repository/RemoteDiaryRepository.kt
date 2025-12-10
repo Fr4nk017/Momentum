@@ -25,4 +25,23 @@ class RemoteDiaryRepository(
     suspend fun obtenerEntradas(userId: String): List<DiaryEntryResponse> {
         return api.getDiaryEntries(userId)
     }
+
+    suspend fun actualizarEntrada(
+        id: String,
+        userId: String,
+        title: String,
+        content: String
+    ): DiaryEntryResponse {
+        val request = DiaryEntryRequest(
+            userId = userId,
+            title = title,
+            content = content,
+            date = null
+        )
+        return api.updateDiaryEntry(id, request)
+    }
+
+    suspend fun eliminarEntrada(id: String) {
+        api.deleteDiaryEntry(id)
+    }
 }

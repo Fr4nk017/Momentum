@@ -48,4 +48,32 @@ class MoodViewModel(
             }
         }
     }
+
+    fun actualizarMood(id: String, emotion: String, note: String?) {
+        viewModelScope.launch {
+            try {
+                _uiState.value = MoodUiState.Loading
+                repository.actualizarMood(id, userId, emotion, note)
+                // luego recargamos el historial
+                val moods = repository.obtenerHistorial(userId)
+                _uiState.value = MoodUiState.Success(moods)
+            } catch (e: Exception) {
+                _uiState.value = MoodUiState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
+
+    fun eliminarMood(id: String) {
+        viewModelScope.launch {
+            try {
+                _uiState.value = MoodUiState.Loading
+                repository.eliminarMood(id)
+                // luego recargamos el historial
+                val moods = repository.obtenerHistorial(userId)
+                _uiState.value = MoodUiState.Success(moods)
+            } catch (e: Exception) {
+                _uiState.value = MoodUiState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
 }

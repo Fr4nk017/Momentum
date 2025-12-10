@@ -25,4 +25,23 @@ class MoodRepository(
     suspend fun obtenerHistorial(userId: String): List<MoodEntryResponse> {
         return api.getMoods(userId)
     }
+
+    suspend fun actualizarMood(
+        id: String,
+        userId: String,
+        emotion: String,
+        note: String?
+    ): MoodEntryResponse {
+        val request = MoodEntryRequest(
+            userId = userId,
+            emotion = emotion,
+            note = note,
+            date = null
+        )
+        return api.updateMood(id, request)
+    }
+
+    suspend fun eliminarMood(id: String) {
+        api.deleteMood(id)
+    }
 }
