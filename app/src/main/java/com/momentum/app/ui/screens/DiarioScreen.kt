@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -48,6 +49,7 @@ fun DiarioScreen(
     val estado by viewModel.estado.collectAsState()
     val diaryState by diaryViewModel.uiState.collectAsState()
     val remoteState by (remoteDiaryViewModel?.uiState?.collectAsState() ?: remember { mutableStateOf(DiaryUiState.Idle) })
+    var showDeleteDialog by remember { mutableStateOf<String?>(null) }
     
     LaunchedEffect(estado.perfil.correo) {
         if (estado.perfil.correo.isNotEmpty()) {
@@ -193,23 +195,52 @@ fun DiarioScreen(
                                             containerColor = MaterialTheme.colorScheme.secondaryContainer
                                         )
                                     ) {
-                                        Column(modifier = Modifier.padding(12.dp)) {
-                                            Text(
-                                                text = entry.title,
-                                                style = MaterialTheme.typography.titleMedium,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Text(
-                                                text = entry.content,
-                                                style = MaterialTheme.typography.bodyMedium
-                                            )
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Text(
-                                                text = "📅 ${entry.date}",
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
-                                            )
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(12.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Column(modifier = Modifier.weight(1f)) {
+                                                Text(
+                                                    text = entry.title,
+                                                    style = MaterialTheme.typography.titleMedium,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                                Spacer(modifier = Modifier.height(4.dp))
+                                                Text(
+                                                    text = entry.content,
+                                                    style = MaterialTheme.typography.bodyMedium
+                                                )
+                                                Spacer(modifier = Modifier.height(4.dp))
+                                                Text(
+                                                    text = "📅 ${entry.date}",
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                                                )
+                                            }
+                                            Row {
+                                                IconButton(
+                                                    onClick = {
+                                                        entry.id?.let { id ->
+                                                            // TODO: Implementar edición de entrada remota
+                                                            // remoteDiaryViewModel.editarEntradaRemota(entry)
+                                                        }
+                                                    }
+                                                ) {
+                                                    Icon(Icons.Default.Edit, contentDescription = "Editar entrada")
+                                                }
+                                                IconButton(
+                                                    onClick = {
+                                                        entry.id?.let { id ->
+                                                            showDeleteDialog = id
+                                                        }
+                                                    }
+                                                ) {
+                                                    Icon(Icons.Default.Delete, contentDescription = "Eliminar entrada")
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -235,6 +266,33 @@ fun DiarioScreen(
                 navController = navController
             )
         }
+    }
+    
+    // Diálogo de confirmación para eliminar entrada del servidor
+    showDeleteDialog?.let { entryId ->
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = null },
+            title = { Text("Eliminar entrada del servidor") },
+            text = { Text("¿Estás seguro de que deseas eliminar esta entrada del servidor?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        remoteDiaryViewModel?.eliminarEntrada(entryId)
+                        showDeleteDialog = null
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = null }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 
