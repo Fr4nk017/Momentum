@@ -50,6 +50,10 @@ fun DiarioScreen(
     val diaryState by diaryViewModel.uiState.collectAsState()
     val remoteState by (remoteDiaryViewModel?.uiState?.collectAsState() ?: remember { mutableStateOf(DiaryUiState.Idle) })
     var showDeleteDialog by remember { mutableStateOf<String?>(null) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var editingEntryId by remember { mutableStateOf<String?>(null) }
+    var editTitle by remember { mutableStateOf("") }
+    var editContent by remember { mutableStateOf("") }
     
     LaunchedEffect(estado.perfil.correo) {
         if (estado.perfil.correo.isNotEmpty()) {
@@ -224,8 +228,10 @@ fun DiarioScreen(
                                                 IconButton(
                                                     onClick = {
                                                         entry.id?.let { id ->
-                                                            // TODO: Implementar edición de entrada remota
-                                                            // remoteDiaryViewModel.editarEntradaRemota(entry)
+                                                            editingEntryId = id
+                                                            editTitle = entry.title
+                                                            editContent = entry.content
+                                                            showEditDialog = true
                                                         }
                                                     }
                                                 ) {
@@ -289,6 +295,71 @@ fun DiarioScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = null }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+    
+    // Diálogo de edición para entradas del servidor
+    if (showEditDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showEditDialog = false
+                editingEntryId = null
+                editTitle = ""
+                editContent = ""
+            },
+            title = { Text("Editar entrada del servidor") },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        value = editTitle,
+                        onValueChange = { editTitle = it },
+                        label = { Text("Título") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = editContent,
+                        onValueChange = { editContent = it },
+                        label = { Text("Contenido") },
+                        modifier = Modifier.fillMaxWidth(),
+                        minLines = 3,
+                        maxLines = 5
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        editingEntryId?.let { id ->
+                            if (editTitle.isNotBlank() && editContent.isNotBlank()) {
+                                remoteDiaryViewModel?.actualizarEntrada(id, editTitle, editContent)
+                                showEditDialog = false
+                                editingEntryId = null
+                                editTitle = ""
+                                editContent = ""
+                            }
+                        }
+                    },
+                    enabled = editTitle.isNotBlank() && editContent.isNotBlank()
+                ) {
+                    Text("Guardar")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showEditDialog = false
+                        editingEntryId = null
+                        editTitle = ""
+                        editContent = ""
+                    }
+                ) {
                     Text("Cancelar")
                 }
             }
